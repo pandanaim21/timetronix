@@ -147,8 +147,7 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   void _showImportDialog() {
-    _showCustomDialog(
-        'Select Classroom Type', '', 'Lecture Class', addClassroom);
+    _showCustomDialog('Add Classroom', '', 'Lecture Class', addClassroom);
   }
 
   void _showEditDialog(Map<String, dynamic> classroom) {

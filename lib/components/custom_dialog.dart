@@ -42,31 +42,40 @@ class _CustomDialogState extends State<CustomDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextField(
-            controller: _textController,
-            onChanged: (value) {
-              setState(() {
-                room = value;
-              });
-            },
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              hintText: widget.hintText,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: TextField(
+              controller: _textController,
+              onChanged: (value) {
+                setState(() {
+                  room = value;
+                });
+              },
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                hintText: widget.hintText,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
             ),
           ),
           SizedBox(height: 20),
           DropdownButton<String>(
+            isExpanded: true,
             value: type,
             onChanged: (String? newValue) {
               setState(() {
                 type = newValue!;
               });
             },
+            borderRadius: BorderRadius.circular(15.0),
+            alignment: Alignment.center,
             items: widget.dropdownItems
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Center(child: Text(value)),
               );
             }).toList(),
           ),
