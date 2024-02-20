@@ -88,14 +88,10 @@ class _AddClassroomState extends State<AddClassroom> {
   void _pickExcelFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['xlsx', 'xls'], // Allow only Excel file types
+      allowedExtensions: ['xlsx', 'xls'],
     );
-
     if (result != null) {
-      // Extract the file path from the result
       String? filePath = result.files.single.path;
-
-      // Process the selected Excel file
       if (filePath != null) {
         await _processExcelFile(filePath);
       }
@@ -103,16 +99,14 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   Future<void> _processExcelFile(String filePath) async {
-    // Open the Excel file
     var bytes = File(filePath).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
 
     // Get the first worksheet
     var sheet = excel.tables.keys.first;
 
-    // Assuming first row is header, so start iterating from the second row
+    // Skip, first row is header
     for (var row in excel.tables[sheet]!.rows.skip(1)) {
-      // Assuming first column is for lecture and second column is for laboratory
       String lecture = row[0]?.value?.toString() ?? '';
       String laboratory = row[1]?.value?.toString() ?? '';
 
