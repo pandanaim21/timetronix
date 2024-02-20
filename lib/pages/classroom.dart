@@ -7,6 +7,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 
 class AddClassroom extends StatefulWidget {
+  const AddClassroom({super.key});
+
   @override
   _AddClassroomState createState() => _AddClassroomState();
 }
@@ -21,7 +23,7 @@ class _AddClassroomState extends State<AddClassroom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add Classroom',
           style: TextStyle(
             color: Colors.white,
@@ -39,16 +41,16 @@ class _AddClassroomState extends State<AddClassroom> {
               children: [
                 ElevatedButton(
                   onPressed: _showImportDialog,
-                  child: Text('Add Classroom'),
+                  child: const Text('Add Classroom'),
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: _pickExcelFile,
-                  child: Text('Import Excel'),
+                  child: const Text('Import Excel'),
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
                 itemCount: classrooms.length,
@@ -61,13 +63,13 @@ class _AddClassroomState extends State<AddClassroom> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               _showEditDialog(classrooms[index]);
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () {
                               removeClassroom(classrooms[index]['room']);
                             },
@@ -132,7 +134,7 @@ class _AddClassroomState extends State<AddClassroom> {
           title: title,
           hintText: 'Enter Classroom',
           initialValue: initialValue,
-          dropdownItems: ['Lecture Class', 'Laboratory Class'],
+          dropdownItems: const ['Lecture Class', 'Laboratory Class'],
           selectedDropdownItem: selectedType,
           onSubmit: onSubmit,
         );

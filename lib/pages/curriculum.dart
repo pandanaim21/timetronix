@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:timetronix/components/custom_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 
 class AddCurriculum extends StatefulWidget {
+  const AddCurriculum({super.key});
+
   @override
   _AddCurriculumState createState() => _AddCurriculumState();
 }
@@ -15,8 +16,8 @@ class _AddCurriculumState extends State<AddCurriculum> {
   final dbHelper = DatabaseHelper();
   final TextEditingController _courseController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _semesterController = TextEditingController();
+  String _selectedYear = '1st Year'; // Default value
+  String _selectedSemester = '1st Semester'; // Default value
   final TextEditingController _unitsController = TextEditingController();
   final TextEditingController _meetingController = TextEditingController();
 
@@ -26,7 +27,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Add Curriculum',
           style: TextStyle(
             color: Colors.white,
@@ -44,16 +45,16 @@ class _AddCurriculumState extends State<AddCurriculum> {
               children: [
                 ElevatedButton(
                   onPressed: _showAddCurriculumDialog,
-                  child: Text('Add Curriculum'),
+                  child: const Text('Add Curriculum'),
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: _pickExcelFile,
-                  child: Text('Import Curriculum'),
+                  child: const Text('Import Curriculum'),
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
                 itemCount: curriculums.length,
@@ -76,13 +77,13 @@ class _AddCurriculumState extends State<AddCurriculum> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit),
+                            icon: const Icon(Icons.edit),
                             onPressed: () {
                               _showEditCurriculumDialog(curriculums[index]);
                             },
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete),
+                            icon: const Icon(Icons.delete),
                             onPressed: () {
                               removeCurriculum(curriculums[index]['id']);
                             },
@@ -141,33 +142,62 @@ class _AddCurriculumState extends State<AddCurriculum> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add Curriculum'),
+          title: const Text('Add Curriculum'),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: _courseController,
-                  decoration: InputDecoration(labelText: 'Course'),
+                  decoration: const InputDecoration(labelText: 'Course'),
                 ),
                 TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Description'),
                 ),
-                TextField(
-                  controller: _yearController,
-                  decoration: InputDecoration(labelText: 'Year'),
+                DropdownButtonFormField<String>(
+                  value: _selectedYear,
+                  items: ['1st Year', '2nd Year', '3rd Year', '4th Year']
+                      .map((String year) {
+                    return DropdownMenuItem<String>(
+                      value: year,
+                      child: Text(year),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedYear = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(labelText: 'Year'),
                 ),
-                TextField(
-                  controller: _semesterController,
-                  decoration: InputDecoration(labelText: 'Semester'),
+                DropdownButtonFormField<String>(
+                  value: _selectedSemester,
+                  items: [
+                    '1st Semester',
+                    '2nd Semester',
+                    '3rd Semester',
+                    '4th Semester',
+                    'Summer',
+                  ].map((String semester) {
+                    return DropdownMenuItem<String>(
+                      value: semester,
+                      child: Text(semester),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedSemester = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(labelText: 'Semester'),
                 ),
                 TextField(
                   controller: _unitsController,
-                  decoration: InputDecoration(labelText: 'Units'),
+                  decoration: const InputDecoration(labelText: 'Units'),
                 ),
                 TextField(
                   controller: _meetingController,
-                  decoration: InputDecoration(labelText: 'Meeting'),
+                  decoration: const InputDecoration(labelText: 'Meeting'),
                 ),
               ],
             ),
@@ -177,21 +207,21 @@ class _AddCurriculumState extends State<AddCurriculum> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 addCurriculum(
                   _courseController.text,
                   _descriptionController.text,
-                  _yearController.text,
-                  _semesterController.text,
+                  _selectedYear,
+                  _selectedSemester,
                   int.tryParse(_unitsController.text) ?? 0,
                   _meetingController.text,
                 );
                 Navigator.of(context).pop();
               },
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ],
         );
@@ -202,8 +232,8 @@ class _AddCurriculumState extends State<AddCurriculum> {
   void _showEditCurriculumDialog(Map<String, dynamic> curriculum) {
     _courseController.text = curriculum['course'];
     _descriptionController.text = curriculum['description'];
-    _yearController.text = curriculum['year'];
-    _semesterController.text = curriculum['semester'];
+    _selectedYear = curriculum['year'];
+    _selectedSemester = curriculum['semester'];
     _unitsController.text = curriculum['units'].toString();
     _meetingController.text = curriculum['meeting'];
 
@@ -211,33 +241,62 @@ class _AddCurriculumState extends State<AddCurriculum> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Edit Curriculum'),
+          title: const Text('Edit Curriculum'),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: _courseController,
-                  decoration: InputDecoration(labelText: 'Course'),
+                  decoration: const InputDecoration(labelText: 'Course'),
                 ),
                 TextField(
                   controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Description'),
                 ),
-                TextField(
-                  controller: _yearController,
-                  decoration: InputDecoration(labelText: 'Year'),
+                DropdownButtonFormField<String>(
+                  value: _selectedYear,
+                  items: ['1st Year', '2nd Year', '3rd Year', '4th Year']
+                      .map((String year) {
+                    return DropdownMenuItem<String>(
+                      value: year,
+                      child: Text(year),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedYear = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(labelText: 'Year'),
                 ),
-                TextField(
-                  controller: _semesterController,
-                  decoration: InputDecoration(labelText: 'Semester'),
+                DropdownButtonFormField<String>(
+                  value: _selectedSemester,
+                  items: [
+                    '1st Semester',
+                    '2nd Semester',
+                    '3rd Semester',
+                    '4th Semester',
+                    'Summer',
+                  ].map((String semester) {
+                    return DropdownMenuItem<String>(
+                      value: semester,
+                      child: Text(semester),
+                    );
+                  }).toList(),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedSemester = value!;
+                    });
+                  },
+                  decoration: const InputDecoration(labelText: 'Semester'),
                 ),
                 TextField(
                   controller: _unitsController,
-                  decoration: InputDecoration(labelText: 'Units'),
+                  decoration: const InputDecoration(labelText: 'Units'),
                 ),
                 TextField(
                   controller: _meetingController,
-                  decoration: InputDecoration(labelText: 'Meeting'),
+                  decoration: const InputDecoration(labelText: 'Meeting'),
                 ),
               ],
             ),
@@ -247,7 +306,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
@@ -255,14 +314,14 @@ class _AddCurriculumState extends State<AddCurriculum> {
                   curriculum['id'],
                   _courseController.text,
                   _descriptionController.text,
-                  _yearController.text,
-                  _semesterController.text,
+                  _selectedYear,
+                  _selectedSemester,
                   int.tryParse(_unitsController.text) ?? 0,
                   _meetingController.text,
                 );
                 Navigator.of(context).pop();
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
