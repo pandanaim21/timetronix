@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomDialog extends StatefulWidget {
+class CustomClassroomDialog extends StatefulWidget {
   final String title;
   final String hintText;
   final String initialValue; // New property to hold the initial value
@@ -8,7 +8,7 @@ class CustomDialog extends StatefulWidget {
   final String selectedDropdownItem;
   final Function(String, String) onSubmit;
 
-  const CustomDialog({
+  const CustomClassroomDialog({
     Key? key,
     required this.title,
     required this.hintText,
@@ -19,10 +19,10 @@ class CustomDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CustomDialogState createState() => _CustomDialogState();
+  _CustomClassroomDialogState createState() => _CustomClassroomDialogState();
 }
 
-class _CustomDialogState extends State<CustomDialog> {
+class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
   late String room;
   late String type;
   late TextEditingController _textController;
@@ -42,7 +42,7 @@ class _CustomDialogState extends State<CustomDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: TextField(
@@ -61,7 +61,7 @@ class _CustomDialogState extends State<CustomDialog> {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           DropdownButton<String>(
             value: type,
             onChanged: (String? newValue) {
@@ -79,7 +79,7 @@ class _CustomDialogState extends State<CustomDialog> {
               );
             }).toList(),
           ),
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
         ],
       ),
       actions: [
@@ -87,14 +87,14 @@ class _CustomDialogState extends State<CustomDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
         TextButton(
           onPressed: () {
             widget.onSubmit(room, type);
             Navigator.of(context).pop();
           },
-          child: Text('Submit'),
+          child: const Text('Submit'),
         ),
       ],
     );

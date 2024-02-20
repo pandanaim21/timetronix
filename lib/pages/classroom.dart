@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:timetronix/components/custom_dialog.dart';
+import 'package:timetronix/components/custom_classroom_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
@@ -15,9 +14,7 @@ class AddClassroom extends StatefulWidget {
 
 class _AddClassroomState extends State<AddClassroom> {
   final dbHelper = DatabaseHelper();
-  final TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> classrooms = [];
-  String selectedClassType = 'Lecture Class'; // Default value
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +37,7 @@ class _AddClassroomState extends State<AddClassroom> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ElevatedButton(
-                  onPressed: _showImportDialog,
+                  onPressed: _showAddDialog,
                   child: const Text('Add Classroom'),
                 ),
                 const SizedBox(width: 8.0),
@@ -130,7 +127,7 @@ class _AddClassroomState extends State<AddClassroom> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CustomDialog(
+        return CustomClassroomDialog(
           title: title,
           hintText: 'Enter Classroom',
           initialValue: initialValue,
@@ -142,34 +139,42 @@ class _AddClassroomState extends State<AddClassroom> {
     );
   }
 
-  void _showImportDialog() {
+  void _showAddDialog() {
     _showCustomDialog('Add Classroom', '', 'Lecture Class', addClassroom);
   }
 
   void _showEditDialog(Map<String, dynamic> classroom) {
-    _showCustomDialog('Edit Classroom', classroom['room'], classroom['type'],
-        (room, type) {
-      updateClassroom(classroom['id'], room, type);
+    _showCustomDialog('Edit Classroom', classroom['room'], classroom['type'], (
+      room,
+      type,
+    ) {
+      updateClassroom(
+        classroom['id'],
+        room,
+        type,
+      );
     });
   }
 
   void addClassroom(String room, String type) async {
     if (room.isNotEmpty) {
       await dbHelper.addClassroom(room, type);
-      loadClassrooms(); // Reload classrooms after adding
-      _controller.clear();
+      // Reload classrooms after adding
+      loadClassrooms();
     }
   }
 
   void removeClassroom(String room) async {
     await dbHelper.removeClassroom(room);
-    loadClassrooms(); // Reload classrooms after removing
+    // Reload classrooms after removing
+    loadClassrooms();
   }
 
   void updateClassroom(int id, String newRoom, String newType) async {
     if (newRoom.isNotEmpty) {
       await dbHelper.editClassroom(id, newRoom, newType);
-      loadClassrooms(); // Reload classrooms after updating
+      // Reload classrooms after updating
+      loadClassrooms();
     }
   }
 
