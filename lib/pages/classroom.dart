@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timetronix/db/db_helper.dart';
+import 'package:file_picker/file_picker.dart';
 
 class AddClassroom extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class _AddClassroomState extends State<AddClassroom> {
   final dbHelper = DatabaseHelper();
   final TextEditingController _controller = TextEditingController();
   List<String> classrooms = [];
+  String selectedClassType = 'Lecture Class'; // Default value
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +32,17 @@ class _AddClassroomState extends State<AddClassroom> {
             Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Classroom Number or Name',
-                    ),
+                  child: ElevatedButton(
+                    onPressed: _showImportDialog,
+                    child: Text('Add Classroom'),
                   ),
                 ),
                 SizedBox(width: 8.0),
-                ElevatedButton(
-                  onPressed: () {
-                    addClassroom(_controller.text);
-                  },
-                  child: Text('Add Classroom'),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _pickExcelFile,
+                    child: Text('Import Excel'),
+                  ),
                 ),
               ],
             ),
@@ -71,9 +71,80 @@ class _AddClassroomState extends State<AddClassroom> {
     );
   }
 
+  void _pickExcelFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'xls'], // Allow only Excel file types
+    );
+
+    if (result != null) {
+      // Extract the file path from the result
+      String? filePath = result.files.single.path;
+
+      // Process the selected Excel file
+      // You can add your logic here, such as reading the file or extracting data
+    }
+  }
+
+  void _showImportDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Select Classroom Type'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButton<String>(
+                    value: selectedClassType,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedClassType = newValue!;
+                      });
+                    },
+                    items: <String>['Lecture Class', 'Laboratory Class']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                  TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Classroom Number or Name',
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    addClassroom(_controller.text);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Add Classroom'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void addClassroom(String roomNumber) async {
     if (roomNumber.isNotEmpty) {
-      int id = await dbHelper.addClassroom(roomNumber);
+      await dbHelper.addClassroom(roomNumber);
       setState(() {
         classrooms.add(roomNumber);
         _controller.clear();
