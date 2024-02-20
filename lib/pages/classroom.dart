@@ -56,11 +56,22 @@ class _AddClassroomState extends State<AddClassroom> {
                     child: ListTile(
                       title: Text('${classrooms[index]['room']}'),
                       subtitle: Text('${classrooms[index]['type']}'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          removeClassroom(classrooms[index]['room']);
-                        },
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              _showEditDialog(classrooms[index]);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              removeClassroom(classrooms[index]['room']);
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -128,25 +139,34 @@ class _AddClassroomState extends State<AddClassroom> {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  DropdownButton<String>(
-                    value: selectedClassType,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedClassType = newValue!;
-                      });
-                    },
-                    items: <String>['Lecture Class', 'Laboratory Class']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                    child: Center(
+                      child: TextField(
+                        controller: _controller,
+                        textAlign: TextAlign.center,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Classroom',
+                        ),
+                      ),
+                    ),
                   ),
-                  TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Classroom Number or Name',
+                  SizedBox(height: 20),
+                  Center(
+                    child: DropdownButton<String>(
+                      value: selectedClassType,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedClassType = newValue!;
+                        });
+                      },
+                      items: <String>['Lecture Class', 'Laboratory Class']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
@@ -163,7 +183,71 @@ class _AddClassroomState extends State<AddClassroom> {
                     addClassroom(_controller.text, selectedClassType);
                     Navigator.of(context).pop();
                   },
-                  child: Text('Add Classroom'),
+                  child: Text('Add'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showEditDialog(Map<String, dynamic> classroom) {
+    String room = classroom['room'];
+    String type = classroom['type'];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('Edit Classroom'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: TextEditingController(text: room),
+                    onChanged: (value) {
+                      room = value;
+                    },
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Classroom',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  DropdownButton<String>(
+                    value: type,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        type = newValue!;
+                      });
+                    },
+                    items: <String>['Lecture Class', 'Laboratory Class']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    updateClassroom(classroom['id'], room, type);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Update'),
                 ),
               ],
             );
@@ -184,6 +268,13 @@ class _AddClassroomState extends State<AddClassroom> {
   void removeClassroom(String room) async {
     await dbHelper.removeClassroom(room);
     loadClassrooms(); // Reload classrooms after removing
+  }
+
+  void updateClassroom(int id, String newRoom, String newType) async {
+    if (newRoom.isNotEmpty) {
+      await dbHelper.editClassroom(id, newRoom, newType);
+      loadClassrooms(); // Reload classrooms after updating
+    }
   }
 
   @override
