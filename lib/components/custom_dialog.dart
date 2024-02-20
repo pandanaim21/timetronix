@@ -62,7 +62,6 @@ class _CustomDialogState extends State<CustomDialog> {
           ),
           SizedBox(height: 20),
           DropdownButton<String>(
-            isExpanded: true,
             value: type,
             onChanged: (String? newValue) {
               setState(() {
