@@ -150,16 +150,16 @@ class _AddCurriculumState extends State<AddCurriculum> {
           course: course,
           description: description,
           yearDropdownItems: const [
-            '1st Year',
-            '2nd Year',
-            '3rd Year',
-            '4th Year'
+            '1st',
+            '2nd',
+            '3rd',
+            '4th',
           ],
           semesterDropdownItems: const [
-            '1st Semester',
-            '2nd Semester',
-            '3rd Semester',
-            '4th Semester',
+            '1st semester',
+            '2nd semester',
+            '3rd semester',
+            '4th semester',
             'Summer',
           ],
           selectedYearDropdownItem: selectedYear,
@@ -173,8 +173,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
   }
 
   void _showAddCurriculumDialog() {
-    _showCustomDialog(
-        'Add Curriculum', '', '', '1st Year', '1st Semester', 0, '',
+    _showCustomDialog('Add Curriculum', '', '', '1st', '1st semester', 0, '',
         (course, description, selectedYear, selectedSemester, units, meeting) {
       addCurriculum(
           course, description, selectedYear, selectedSemester, units, meeting);
