@@ -42,6 +42,7 @@ class _CustomDialogState extends State<CustomDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SizedBox(height: 50),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0),
             child: TextField(
@@ -78,6 +79,7 @@ class _CustomDialogState extends State<CustomDialog> {
               );
             }).toList(),
           ),
+          SizedBox(height: 50),
         ],
       ),
       actions: [
