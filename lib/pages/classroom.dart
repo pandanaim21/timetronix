@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/custom_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
@@ -128,133 +129,33 @@ class _AddClassroomState extends State<AddClassroom> {
     loadClassrooms();
   }
 
-  void _showImportDialog() {
+  void _showCustomDialog(String title, String initialValue, String selectedType,
+      Function(String, String) onSubmit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text('Select Classroom Type'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Center(
-                      child: TextField(
-                        controller: _controller,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: 'Enter Classroom',
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Center(
-                    child: DropdownButton<String>(
-                      value: selectedClassType,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedClassType = newValue!;
-                        });
-                      },
-                      items: <String>['Lecture Class', 'Laboratory Class']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    addClassroom(_controller.text, selectedClassType);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Add'),
-                ),
-              ],
-            );
-          },
+        return CustomDialog(
+          title: title,
+          hintText: 'Enter Classroom',
+          initialValue: initialValue,
+          dropdownItems: ['Lecture Class', 'Laboratory Class'],
+          selectedDropdownItem: selectedType,
+          onSubmit: onSubmit,
         );
       },
     );
   }
 
-  void _showEditDialog(Map<String, dynamic> classroom) {
-    String room = classroom['room'];
-    String type = classroom['type'];
+  void _showImportDialog() {
+    _showCustomDialog(
+        'Select Classroom Type', '', 'Lecture Class', addClassroom);
+  }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text('Edit Classroom'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: TextEditingController(text: room),
-                    onChanged: (value) {
-                      room = value;
-                    },
-                    textAlign: TextAlign.center,
-                    decoration: InputDecoration(
-                      hintText: 'Enter Classroom',
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  DropdownButton<String>(
-                    value: type,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        type = newValue!;
-                      });
-                    },
-                    items: <String>['Lecture Class', 'Laboratory Class']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    updateClassroom(classroom['id'], room, type);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Update'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+  void _showEditDialog(Map<String, dynamic> classroom) {
+    _showCustomDialog('Edit Classroom', classroom['room'], classroom['type'],
+        (room, type) {
+      updateClassroom(classroom['id'], room, type);
+    });
   }
 
   void addClassroom(String room, String type) async {
