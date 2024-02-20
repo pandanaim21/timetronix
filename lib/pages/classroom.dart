@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:timetronix/db/db_helper.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:excel/excel.dart';
 
 class AddClassroom extends StatefulWidget {
   @override
@@ -10,7 +13,7 @@ class AddClassroom extends StatefulWidget {
 class _AddClassroomState extends State<AddClassroom> {
   final dbHelper = DatabaseHelper();
   final TextEditingController _controller = TextEditingController();
-  List<String> classrooms = [];
+  List<Map<String, dynamic>> classrooms = [];
   String selectedClassType = 'Lecture Class'; // Default value
 
   @override
@@ -26,23 +29,21 @@ class _AddClassroomState extends State<AddClassroom> {
         backgroundColor: Colors.blue[800],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _showImportDialog,
-                    child: Text('Add Classroom'),
-                  ),
+                ElevatedButton(
+                  onPressed: _showImportDialog,
+                  child: Text('Add Classroom'),
                 ),
                 SizedBox(width: 8.0),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _pickExcelFile,
-                    child: Text('Import Excel'),
-                  ),
+                ElevatedButton(
+                  onPressed: _pickExcelFile,
+                  child: Text('Import Excel'),
                 ),
               ],
             ),
@@ -50,14 +51,15 @@ class _AddClassroomState extends State<AddClassroom> {
             Expanded(
               child: ListView.builder(
                 itemCount: classrooms.length,
-                itemBuilder: (BuildContext context, int roomNumber) {
+                itemBuilder: (BuildContext context, int index) {
                   return Card(
                     child: ListTile(
-                      title: Text('${classrooms[roomNumber]}'),
+                      title: Text('${classrooms[index]['room']}'),
+                      subtitle: Text('${classrooms[index]['type']}'),
                       trailing: IconButton(
                         icon: Icon(Icons.delete),
                         onPressed: () {
-                          removeClassroom(classrooms[roomNumber]);
+                          removeClassroom(classrooms[index]['room']);
                         },
                       ),
                     ),
@@ -82,8 +84,37 @@ class _AddClassroomState extends State<AddClassroom> {
       String? filePath = result.files.single.path;
 
       // Process the selected Excel file
-      // You can add your logic here, such as reading the file or extracting data
+      if (filePath != null) {
+        await _processExcelFile(filePath);
+      }
     }
+  }
+
+  Future<void> _processExcelFile(String filePath) async {
+    // Open the Excel file
+    var bytes = File(filePath).readAsBytesSync();
+    var excel = Excel.decodeBytes(bytes);
+
+    // Get the first worksheet
+    var sheet = excel.tables.keys.first;
+
+    // Assuming first row is header, so start iterating from the second row
+    for (var row in excel.tables[sheet]!.rows.skip(1)) {
+      // Assuming first column is for lecture and second column is for laboratory
+      String lecture = row[0]?.value?.toString() ?? '';
+      String laboratory = row[1]?.value?.toString() ?? '';
+
+      // Insert into database
+      if (lecture.isNotEmpty) {
+        await dbHelper.addClassroom(lecture, 'Lecture Class');
+      }
+      if (laboratory.isNotEmpty) {
+        await dbHelper.addClassroom(laboratory, 'Laboratory Class');
+      }
+    }
+
+    // Reload classrooms after adding
+    loadClassrooms();
   }
 
   void _showImportDialog() {
@@ -129,7 +160,7 @@ class _AddClassroomState extends State<AddClassroom> {
                 ),
                 TextButton(
                   onPressed: () {
-                    addClassroom(_controller.text);
+                    addClassroom(_controller.text, selectedClassType);
                     Navigator.of(context).pop();
                   },
                   child: Text('Add Classroom'),
@@ -142,21 +173,17 @@ class _AddClassroomState extends State<AddClassroom> {
     );
   }
 
-  void addClassroom(String roomNumber) async {
-    if (roomNumber.isNotEmpty) {
-      await dbHelper.addClassroom(roomNumber);
-      setState(() {
-        classrooms.add(roomNumber);
-        _controller.clear();
-      });
+  void addClassroom(String room, String type) async {
+    if (room.isNotEmpty) {
+      await dbHelper.addClassroom(room, type);
+      loadClassrooms(); // Reload classrooms after adding
+      _controller.clear();
     }
   }
 
-  void removeClassroom(String roomNumber) async {
-    await dbHelper.removeClassroom(roomNumber);
-    setState(() {
-      classrooms.remove(roomNumber);
-    });
+  void removeClassroom(String room) async {
+    await dbHelper.removeClassroom(room);
+    loadClassrooms(); // Reload classrooms after removing
   }
 
   @override
@@ -166,9 +193,9 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   void loadClassrooms() async {
-    List<String> classroomNames = await dbHelper.getClassrooms();
+    List<Map<String, dynamic>> classroomData = await dbHelper.getClassrooms();
     setState(() {
-      classrooms = classroomNames;
+      classrooms = classroomData;
     });
   }
 }

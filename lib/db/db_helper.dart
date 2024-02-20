@@ -18,45 +18,42 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'classroom.db'),
+      join(path, 'classrooms.db'),
       onCreate: (database, version) async {
         await database.execute(
-          "CREATE TABLE Classroom(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT)",
+          "CREATE TABLE Classroom(id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, type TEXT)",
         );
       },
       version: 1,
     );
   }
 
-  Future<int> addClassroom(String name) async {
+  Future<int> addClassroom(String room, String type) async {
     final db = await database;
-    return await db.insert('Classroom', {'name': name});
+    return await db.insert('Classroom', {'room': room, 'type': type});
   }
 
-  Future<int> editClassroom(int id, String newName) async {
+  Future<int> editClassroom(int id, String newRoom, String newType) async {
     final db = await database;
     return await db.update(
       'Classroom',
-      {'name': newName},
+      {'room': newRoom, 'type': newType},
       where: "id = ?",
       whereArgs: [id],
     );
   }
 
-  Future<int> removeClassroom(String name) async {
+  Future<int> removeClassroom(String room) async {
     final db = await database;
     return await db.delete(
       'Classroom',
-      where: "name = ?",
-      whereArgs: [name],
+      where: "room = ?",
+      whereArgs: [room],
     );
   }
 
-  Future<List<String>> getClassrooms() async {
+  Future<List<Map<String, dynamic>>> getClassrooms() async {
     final db = await database;
-    List<Map<String, dynamic>> maps = await db.query('Classroom');
-    return List.generate(maps.length, (i) {
-      return maps[i]['name'];
-    });
+    return await db.query('Classroom');
   }
 }
