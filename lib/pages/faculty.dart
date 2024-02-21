@@ -135,6 +135,26 @@ class _AddFacultyState extends State<AddFaculty> {
       String selectedPosition,
       int selectedPriorityNumber,
       Function(String, String, String, int) onSubmit) {
+    List<String> positionDropdownItems = [
+      'Dean',
+      'Assistant Dean',
+      'Secretary',
+      'Chairperson',
+      'Faculty',
+    ];
+
+    // Map each position to its corresponding priority number
+    Map<String, int> positionPriorityMap = {
+      'Dean': 1,
+      'Assistant Dean': 2,
+      'Secretary': 3,
+      'Chairperson': 4,
+      'Faculty': 5,
+    };
+
+    // Set the selected priority number based on the selected position
+    selectedPriorityNumber = positionPriorityMap[selectedPosition] ?? 1;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -142,15 +162,9 @@ class _AddFacultyState extends State<AddFaculty> {
           title: title,
           firstName: firstName,
           lastName: lastName,
-          positionDropdownItems: const [
-            'Faculty',
-            'Dean',
-            'Assistant Dean',
-            'Secretary',
-            'Chairperson',
-          ],
+          positionDropdownItems: positionDropdownItems,
           selectedPositionDropdownItem: selectedPosition,
-          priorityNumberDropdownItems: [1, 2, 3, 4, 5],
+          priorityNumberDropdownItems: const [1, 2, 3, 4, 5],
           selectedPriorityNumberDropdownItem: selectedPriorityNumber,
           onSubmit: onSubmit,
         );
