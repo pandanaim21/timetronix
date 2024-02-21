@@ -155,7 +155,7 @@ class _AddFacultyState extends State<AddFaculty> {
             'Chairperson',
           ],
           selectedPositionDropdownItem: selectedPosition,
-          priorityNumberDropdownItems: const [1, 2, 3, 4, 5],
+          priorityNumberDropdownItems: const [5, 4, 3, 2, 1],
           selectedPriorityNumberDropdownItem: selectedPriorityNumber,
           onSubmit: onSubmit,
         );

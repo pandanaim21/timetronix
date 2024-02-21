@@ -7,11 +7,13 @@ class CustomCurriculumDialog extends StatefulWidget {
   final String description;
   final List<String> yearDropdownItems;
   final List<String> semesterDropdownItems;
+  final List<String> hasLabDropdownItems;
   final String selectedYearDropdownItem;
   final String selectedSemesterDropdownItem;
   final int units;
   final String meeting;
-  final Function(String, String, String, String, int, String) onSubmit;
+  final String selectedHasLabDropdownItem;
+  final Function(String, String, String, String, int, String, String) onSubmit;
 
   const CustomCurriculumDialog({
     Key? key,
@@ -25,6 +27,8 @@ class CustomCurriculumDialog extends StatefulWidget {
     required this.units,
     required this.meeting,
     required this.onSubmit,
+    required this.hasLabDropdownItems,
+    required this.selectedHasLabDropdownItem,
   }) : super(key: key);
 
   @override
@@ -39,6 +43,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
   late String _selectedSemester;
   late int _units;
   late String _meeting;
+  late String _selectedHasLab;
 
   late TextEditingController _courseController;
   late TextEditingController _descriptionController;
@@ -54,6 +59,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
     _selectedSemester = widget.selectedSemesterDropdownItem;
     _units = widget.units;
     _meeting = widget.meeting;
+    _selectedHasLab = widget.selectedHasLabDropdownItem;
 
     _courseController = TextEditingController(text: _course);
     _descriptionController = TextEditingController(text: _description);
@@ -122,6 +128,37 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                   _meeting = value;
                 });
               },
+            ),
+            const SizedBox(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Has Laboratory Class?'),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedHasLab,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedHasLab = newValue!;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12.0),
+                    items: widget.hasLabDropdownItems
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Column(
@@ -204,6 +241,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
               _selectedSemester,
               _units,
               _meeting,
+              _selectedHasLab,
             );
             Navigator.of(context).pop();
           },

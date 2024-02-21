@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/dictionary.dart';
 import 'package:timetronix/db/db_helper.dart';
 
 class EditSchedule extends StatefulWidget {
@@ -11,15 +12,15 @@ class EditSchedule extends StatefulWidget {
 
 class _EditScheduleState extends State<EditSchedule> {
   final dbHelper = DatabaseHelper();
-
   String? selectedFacultyId;
   String? selectedCourseId;
-  String? selectedRoomId;
-
+  String? selectedLecRoomId;
+  String? selectedLabRoomId;
   int units = 0;
   String? position;
   int priorityNumber = 0;
-  String? roomType;
+  String? selectedStartTime;
+  String? selectedEndTime;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +58,6 @@ class _EditScheduleState extends State<EditSchedule> {
     TextEditingController unitsController =
         TextEditingController(text: units.toString());
     TextEditingController meetingsController = TextEditingController();
-    TextEditingController roomTypeController =
-        TextEditingController(text: roomType);
 
     return showDialog(
       context: context,
@@ -69,7 +68,6 @@ class _EditScheduleState extends State<EditSchedule> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Select Faculty:'),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: dbHelper.getFaculty(),
                   builder: (context, snapshot) {
@@ -93,13 +91,13 @@ class _EditScheduleState extends State<EditSchedule> {
                         );
                       }
                       return DropdownButton<String>(
+                        isExpanded: true,
                         value: selectedFacultyId,
                         items: facultyItems,
                         onChanged: (value) async {
                           setState(() {
                             selectedFacultyId = value;
                           });
-                          // Fetch faculty details based on selectedFacultyId
                           Map<String, dynamic> facultyDetails = await dbHelper
                               .getFacultyDetails(selectedFacultyId);
                           setState(() {
@@ -118,13 +116,7 @@ class _EditScheduleState extends State<EditSchedule> {
                   controller: positionController,
                   decoration: const InputDecoration(labelText: 'Position'),
                 ),
-                TextField(
-                  controller: priorityController,
-                  decoration:
-                      const InputDecoration(labelText: 'Priority Number'),
-                ),
                 const SizedBox(height: 10),
-                const Text('Select Course:'),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: dbHelper.getCurriculum(),
                   builder: (context, snapshot) {
@@ -146,8 +138,8 @@ class _EditScheduleState extends State<EditSchedule> {
                           ),
                         );
                       }
-
                       return DropdownButton<String>(
+                        isExpanded: true,
                         value: selectedCourseId,
                         items: courseItems,
                         onChanged: (value) async {
@@ -158,7 +150,6 @@ class _EditScheduleState extends State<EditSchedule> {
                           Map<String, dynamic> courseDetails =
                               await dbHelper.getCourseDetails(selectedCourseId);
                           setState(() {
-                            // Populate other fields for course if needed
                             descriptionController.text =
                                 courseDetails['description'] ?? '';
                             yearController.text = courseDetails['year'] ?? '';
@@ -168,6 +159,12 @@ class _EditScheduleState extends State<EditSchedule> {
                                 courseDetails['units']?.toString() ?? '';
                             meetingsController.text =
                                 courseDetails['meeting'] ?? '';
+                            // Check if the course has lab
+                            String hasLab = courseDetails['hasLab'] ?? '';
+                            // Disable the lab room dropdown if the course has no laboratory
+                            if (hasLab == 'NO') {
+                              selectedLabRoomId = null;
+                            }
                           });
                         },
                       );
@@ -179,66 +176,127 @@ class _EditScheduleState extends State<EditSchedule> {
                   decoration: const InputDecoration(labelText: 'Description'),
                 ),
                 TextField(
-                  controller: yearController,
-                  decoration: const InputDecoration(labelText: 'Year'),
-                ),
-                TextField(
-                  controller: semesterController,
-                  decoration: const InputDecoration(labelText: 'Semester'),
-                ),
-                TextField(
                   controller: unitsController,
                   decoration: const InputDecoration(labelText: 'Units'),
                 ),
                 TextField(
                   controller: meetingsController,
-                  decoration: const InputDecoration(labelText: 'Meetings'),
+                  decoration: const InputDecoration(labelText: 'Frequency'),
                 ),
                 const SizedBox(height: 10),
-                const Text('Select Room:'),
-                FutureBuilder<List<Map<String, dynamic>>>(
-                  future: dbHelper.getClassrooms(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else {
-                      List<DropdownMenuItem<String>> roomItems = [
-                        const DropdownMenuItem(
-                          value: null,
-                          child: Text('Select Room'),
-                        ),
-                      ];
+                Row(
+                  children: [
+                    FutureBuilder<List<Map<String, dynamic>>>(
+                      future: dbHelper.getClassrooms(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else {
+                          List<DropdownMenuItem<String>> roomItems = [
+                            const DropdownMenuItem(
+                              value: null,
+                              child: Text('Lecture Room'),
+                            ),
+                          ];
+                          for (var room in snapshot.data!) {
+                            if (room['type'] == 'Lecture Class') {
+                              roomItems.add(
+                                DropdownMenuItem(
+                                  value: room['id'].toString(),
+                                  child: Text(room['room']),
+                                ),
+                              );
+                            }
+                          }
+                          return DropdownButton<String>(
+                            value: selectedLecRoomId,
+                            items: roomItems,
+                            onChanged: (value) async {
+                              setState(() {
+                                selectedLecRoomId = value;
+                              });
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 20),
+                    FutureBuilder<List<Map<String, dynamic>>>(
+                      future: dbHelper.getClassrooms(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else {
+                          List<DropdownMenuItem<String>> roomItems = [
+                            const DropdownMenuItem(
+                              value: null,
+                              child: Text('Laboratory Room'),
+                            ),
+                          ];
 
-                      for (var room in snapshot.data!) {
-                        roomItems.add(
-                          DropdownMenuItem(
-                            value: room['id'].toString(),
-                            child: Text(room['room']),
-                          ),
-                        );
-                      }
-
-                      return DropdownButton<String>(
-                        value: selectedRoomId,
-                        items: roomItems,
-                        onChanged: (value) async {
-                          setState(() {
-                            selectedRoomId = value;
-                          });
-                          // Fetch room details based on selectedRoomId
-                          Map<String, dynamic> roomDetails =
-                              await dbHelper.getRoomDetails(selectedRoomId);
-                          setState(() {
-                            roomTypeController.text = roomDetails['type'] ?? '';
-                          });
-                        },
-                      );
-                    }
-                  },
+                          for (var room in snapshot.data!) {
+                            if (room['type'] == 'Laboratory Class') {
+                              roomItems.add(
+                                DropdownMenuItem(
+                                  value: room['id'].toString(),
+                                  child: Text(room['room']),
+                                ),
+                              );
+                            }
+                          }
+                          return DropdownButton<String>(
+                            value: selectedLabRoomId,
+                            items: roomItems,
+                            onChanged: (value) async {
+                              setState(() {
+                                selectedLabRoomId = value;
+                              });
+                            },
+                          );
+                        }
+                      },
+                    ),
+                  ],
                 ),
-                TextField(
-                  controller: roomTypeController,
-                  decoration: const InputDecoration(labelText: 'Room Type'),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text('Start Time: '),
+                    DropdownButton<String>(
+                      value: selectedStartTime,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedStartTime = value;
+                        });
+                      },
+                      items: timeSlots.map((String time) {
+                        return DropdownMenuItem<String>(
+                          value: time,
+                          child: Text(time),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text('-'),
+                    const SizedBox(width: 10),
+                    const Text('End Time: '),
+                    DropdownButton<String>(
+                      value: selectedEndTime,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedEndTime = value;
+                        });
+                      },
+                      items: timeSlots.map((String time) {
+                        return DropdownMenuItem<String>(
+                          value: time,
+                          child: Text(time),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -253,26 +311,7 @@ class _EditScheduleState extends State<EditSchedule> {
             TextButton(
               child: const Text("Add"),
               onPressed: () async {
-                // await dbHelper.addFaculty(
-                //   "Firstname",
-                //   "Lastname",
-                //   positionController.text,
-                //   int.parse(priorityController.text),
-                // );
-                // await dbHelper.addCurriculum(
-                //   "Course",
-                //   descriptionController.text,
-                //   yearController.text,
-                //   semesterController.text,
-                //   int.parse(unitsController.text),
-                //   meetingsController.text,
-                // );
-                // await dbHelper.addClassroom(
-                //   "Room",
-                //   roomTypeController.text,
-                // );
-                // Dismiss dialog
-                // ignore: use_build_context_synchronously
+                //implement adding
                 Navigator.of(context).pop();
               },
             ),

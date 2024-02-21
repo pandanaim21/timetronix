@@ -18,6 +18,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
   List<Map<String, dynamic>> curriculums = [];
   String defaultSelectedYear = '1st';
   String defaultSelectedSemester = '1st semester';
+  String defaultSelectedHasLab = 'NO';
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +73,9 @@ class _AddCurriculumState extends State<AddCurriculum> {
                           Text('Semester: ${curriculums[index]['semester']}'),
                           Text('Units: ${curriculums[index]['units']}'),
                           Text('Frequency: ${curriculums[index]['meeting']}'),
+                          Text(
+                            'Laboratory Class: ${curriculums[index]['hasLab']}',
+                          )
                         ],
                       ),
                       trailing: Row(
@@ -126,15 +130,11 @@ class _AddCurriculumState extends State<AddCurriculum> {
       String year = row[2]?.value?.toString() ?? '';
       String semester = row[3]?.value?.toString() ?? '';
       int units = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
+      int hasLabValue = int.tryParse(row[6]?.value?.toString() ?? '') ?? 0;
+      String hasLab = hasLabValue > 0 ? 'YES' : 'NO';
       String meeting = row[8]?.value?.toString() ?? '';
       await dbHelper.addCurriculum(
-        course,
-        description,
-        year,
-        semester,
-        units,
-        meeting,
-      );
+          course, description, year, semester, units, meeting, hasLab);
     }
     loadCurriculums();
   }
@@ -147,7 +147,8 @@ class _AddCurriculumState extends State<AddCurriculum> {
       String selectedSemester,
       int units,
       String meeting,
-      Function(String, String, String, String, int, String) onSubmit) {
+      String selectedHasLab,
+      Function(String, String, String, String, int, String, String) onSubmit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -168,11 +169,16 @@ class _AddCurriculumState extends State<AddCurriculum> {
             '4th semester',
             'Summer',
           ],
+          hasLabDropdownItems: const [
+            'NO',
+            'YES',
+          ],
           selectedYearDropdownItem: selectedYear,
           selectedSemesterDropdownItem: selectedSemester,
           units: units,
           meeting: meeting,
           onSubmit: onSubmit,
+          selectedHasLabDropdownItem: selectedHasLab,
         );
       },
     );
@@ -187,7 +193,9 @@ class _AddCurriculumState extends State<AddCurriculum> {
       defaultSelectedSemester,
       0,
       '',
-      (course, description, selectedYear, selectedSemester, units, meeting) {
+      defaultSelectedHasLab,
+      (course, description, selectedYear, selectedSemester, units, meeting,
+          selectedHasLab) {
         addCurriculum(
           course,
           description,
@@ -195,6 +203,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
           selectedSemester,
           units,
           meeting,
+          selectedHasLab,
         );
       },
     );
@@ -209,7 +218,9 @@ class _AddCurriculumState extends State<AddCurriculum> {
       curriculum['semester'],
       curriculum['units'],
       curriculum['meeting'],
-      (course, description, selectedYear, selectedSemester, units, meeting) {
+      curriculum['hasLab'],
+      (course, description, selectedYear, selectedSemester, units, meeting,
+          hasLab) {
         updateCurriculum(
           curriculum['id'],
           course,
@@ -218,15 +229,16 @@ class _AddCurriculumState extends State<AddCurriculum> {
           selectedSemester,
           units,
           meeting,
+          hasLab,
         );
       },
     );
   }
 
   void addCurriculum(String course, String description, String year,
-      String semester, int units, String meeting) async {
+      String semester, int units, String meeting, String hasLab) async {
     await dbHelper.addCurriculum(
-        course, description, year, semester, units, meeting);
+        course, description, year, semester, units, meeting, hasLab);
     loadCurriculums();
   }
 
@@ -236,9 +248,9 @@ class _AddCurriculumState extends State<AddCurriculum> {
   }
 
   void updateCurriculum(int id, String course, String description, String year,
-      String semester, int units, String meeting) async {
+      String semester, int units, String meeting, String hasLab) async {
     await dbHelper.editCurriculum(
-        id, course, description, year, semester, units, meeting);
+        id, course, description, year, semester, units, meeting, hasLab);
     loadCurriculums();
   }
 
