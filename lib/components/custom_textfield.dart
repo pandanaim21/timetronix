@@ -2,30 +2,47 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final Color borderColor;
-  final double paddingSize;
   final String hintText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final TextAlign textAlign;
+  final EdgeInsets symmetricPadding;
+  final EdgeInsets leftPadding;
 
   const CustomTextField({
     Key? key,
-    this.borderColor = Colors.blue,
-    this.paddingSize = 16.0,
-    this.hintText = '',
+    required this.borderColor,
+    required this.hintText,
+    this.controller,
+    this.onChanged,
+    this.textAlign = TextAlign.start,
+    this.symmetricPadding = const EdgeInsets.symmetric(horizontal: 0.0),
+    this.leftPadding = const EdgeInsets.only(left: 0.0),
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(paddingSize),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: borderColor,
+    return Padding(
+      padding: symmetricPadding,
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: borderColor,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(12.0),
         ),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hintText,
-          border: InputBorder.none,
+        child: Padding(
+          padding: leftPadding,
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            textAlign: textAlign,
+            decoration: InputDecoration(
+              hintText: hintText,
+              border: InputBorder.none,
+            ),
+          ),
         ),
       ),
     );

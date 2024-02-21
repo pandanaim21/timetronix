@@ -16,8 +16,8 @@ class AddCurriculum extends StatefulWidget {
 class _AddCurriculumState extends State<AddCurriculum> {
   final dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> curriculums = [];
-  String selectedyear = 'Lecture Class'; // Default value
-  String selected = 'Lecture Class'; // Default value
+  String defaultSelectedYear = '1st';
+  String defaultSelectedSemester = '1st semester';
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +173,8 @@ class _AddCurriculumState extends State<AddCurriculum> {
   }
 
   void _showAddCurriculumDialog() {
-    _showCustomDialog('Add Curriculum', '', '', '1st', '1st semester', 0, '',
+    _showCustomDialog('Add Curriculum', '', '', defaultSelectedYear,
+        defaultSelectedSemester, 0, '',
         (course, description, selectedYear, selectedSemester, units, meeting) {
       addCurriculum(
           course, description, selectedYear, selectedSemester, units, meeting);

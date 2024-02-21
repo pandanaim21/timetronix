@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/custom_textfield.dart';
 
 class CustomClassroomDialog extends StatefulWidget {
   final String title;
   final String hintText;
-  final String initialValue; // New property to hold the initial value
+  final String room;
   final List<String> dropdownItems;
   final String selectedDropdownItem;
   final Function(String, String) onSubmit;
@@ -12,7 +13,7 @@ class CustomClassroomDialog extends StatefulWidget {
     Key? key,
     required this.title,
     required this.hintText,
-    required this.initialValue,
+    required this.room,
     required this.dropdownItems,
     required this.selectedDropdownItem,
     required this.onSubmit,
@@ -23,16 +24,17 @@ class CustomClassroomDialog extends StatefulWidget {
 }
 
 class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
-  late String room;
-  late String type;
-  late TextEditingController _textController;
+  late String _room;
+  late String _type;
+  late TextEditingController _roomController;
 
   @override
   void initState() {
     super.initState();
-    room = widget.initialValue;
-    type = widget.selectedDropdownItem;
-    _textController = TextEditingController(text: widget.initialValue);
+    _room = widget.room;
+    _type = widget.selectedDropdownItem;
+
+    _roomController = TextEditingController(text: _room);
   }
 
   @override
@@ -43,33 +45,28 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 50),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: TextField(
-              controller: _textController,
-              onChanged: (value) {
-                setState(() {
-                  room = value;
-                });
-              },
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                ),
-              ),
-            ),
+          CustomTextField(
+            borderColor: Colors.blue,
+            hintText: 'Classroom',
+            controller: _roomController,
+            textAlign: TextAlign.center,
+            symmetricPadding: const EdgeInsets.symmetric(horizontal: 45.0),
+            leftPadding: const EdgeInsets.only(left: 0.0),
+            onChanged: (value) {
+              setState(() {
+                _room = value;
+              });
+            },
           ),
           const SizedBox(height: 20),
           DropdownButton<String>(
-            value: type,
+            value: _type,
             onChanged: (String? newValue) {
               setState(() {
-                type = newValue!;
+                _type = newValue!;
               });
             },
-            borderRadius: BorderRadius.circular(15.0),
+            borderRadius: BorderRadius.circular(12.0),
             alignment: Alignment.center,
             items: widget.dropdownItems
                 .map<DropdownMenuItem<String>>((String value) {
@@ -91,7 +88,7 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
         ),
         TextButton(
           onPressed: () {
-            widget.onSubmit(room, type);
+            widget.onSubmit(_room, _type);
             Navigator.of(context).pop();
           },
           child: const Text('Submit'),

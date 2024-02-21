@@ -16,8 +16,8 @@ class AddFaculty extends StatefulWidget {
 class _AddFacultyState extends State<AddFaculty> {
   final dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> faculties = [];
-  String selectedPosition = 'Faculty'; // Default value
-  int selectedPriorityNumber = 1; // Default value
+  String defaultPosition = 'Faculty';
+  int defaultPriorityNumber = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +159,8 @@ class _AddFacultyState extends State<AddFaculty> {
   }
 
   void _showAddFacultyDialog() {
-    _showCustomDialog('Add Faculty', '', '', 'Faculty', 1,
+    _showCustomDialog(
+        'Add Faculty', '', '', defaultPosition, defaultPriorityNumber,
         (firstName, lastName, selectedPosition, selectedPriorityNumber) {
       addFaculty(firstName, lastName, selectedPosition, selectedPriorityNumber);
     });

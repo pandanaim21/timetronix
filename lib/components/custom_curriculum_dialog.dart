@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/custom_textfield.dart';
 
 class CustomCurriculumDialog extends StatefulWidget {
   final String title;
@@ -66,25 +67,62 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            TextField(
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Course',
               controller: _courseController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
               onChanged: (value) {
                 setState(() {
                   _course = value;
                 });
               },
-              decoration: const InputDecoration(labelText: 'Course'),
             ),
-            TextField(
+            SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Description',
               controller: _descriptionController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
               onChanged: (value) {
                 setState(() {
                   _description = value;
                 });
               },
-              decoration: const InputDecoration(labelText: 'Description'),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Units',
+              controller: _unitsController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
+              onChanged: (value) {
+                setState(() {
+                  _units = int.tryParse(value) ?? 0;
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Meeting',
+              controller: _meetingController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
+              onChanged: (value) {
+                setState(() {
+                  _meeting = value;
+                });
+              },
+            ),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
@@ -109,7 +147,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
@@ -133,24 +171,6 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                   );
                 }).toList(),
               ),
-            ),
-            TextField(
-              controller: _unitsController,
-              onChanged: (value) {
-                setState(() {
-                  _units = int.tryParse(value) ?? 0;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Units'),
-            ),
-            TextField(
-              controller: _meetingController,
-              onChanged: (value) {
-                setState(() {
-                  _meeting = value;
-                });
-              },
-              decoration: const InputDecoration(labelText: 'Meeting'),
             ),
           ],
         ),

@@ -15,6 +15,7 @@ class AddClassroom extends StatefulWidget {
 class _AddClassroomState extends State<AddClassroom> {
   final dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> classrooms = [];
+  String defaultSelectedType = 'Lecture Class';
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,7 @@ class _AddClassroomState extends State<AddClassroom> {
     loadClassrooms();
   }
 
-  void _showCustomDialog(String title, String initialValue, String selectedType,
+  void _showCustomDialog(String title, String room, String selectedType,
       Function(String, String) onSubmit) {
     showDialog(
       context: context,
@@ -130,7 +131,7 @@ class _AddClassroomState extends State<AddClassroom> {
         return CustomClassroomDialog(
           title: title,
           hintText: 'Enter Classroom',
-          initialValue: initialValue,
+          room: room,
           dropdownItems: const ['Lecture Class', 'Laboratory Class'],
           selectedDropdownItem: selectedType,
           onSubmit: onSubmit,
@@ -140,7 +141,7 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   void _showAddDialog() {
-    _showCustomDialog('Add Classroom', '', 'Lecture Class', addClassroom);
+    _showCustomDialog('Add Classroom', '', defaultSelectedType, addClassroom);
   }
 
   void _showEditDialog(Map<String, dynamic> classroom) {

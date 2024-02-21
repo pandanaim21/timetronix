@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/custom_textfield.dart';
 
 class CustomFacultyDialog extends StatefulWidget {
   final String title;
@@ -54,25 +55,34 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
       content: SingleChildScrollView(
         child: Column(
           children: [
-            TextField(
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Firstname',
               controller: _firstNameController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
               onChanged: (value) {
                 setState(() {
                   _firstName = value;
                 });
               },
-              decoration: const InputDecoration(labelText: 'First Name'),
             ),
-            TextField(
+            SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Lastname',
               controller: _lastNameController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
               onChanged: (value) {
                 setState(() {
                   _lastName = value;
                 });
               },
-              decoration: const InputDecoration(labelText: 'Last Name'),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
@@ -97,7 +107,7 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<int>(
