@@ -35,20 +35,23 @@ class _AddFacultyState extends State<AddFaculty> {
         padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                  onPressed: _showAddFacultyDialog,
-                  child: const Text('Add Faculty'),
-                ),
-                const SizedBox(width: 8.0),
-                ElevatedButton(
-                  onPressed: _pickExcelFile,
-                  child: const Text('Import Faculty'),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: _showAddFacultyDialog,
+                    child: const Text('Add Faculty'),
+                  ),
+                  const SizedBox(width: 8.0),
+                  ElevatedButton(
+                    onPressed: _pickExcelFile,
+                    child: const Text('Import Faculty'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16.0),
             Expanded(

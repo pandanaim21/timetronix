@@ -33,20 +33,23 @@ class _AddClassroomState extends State<AddClassroom> {
         padding: const EdgeInsets.all(5.0),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                  onPressed: _showAddDialog,
-                  child: const Text('Add Classroom'),
-                ),
-                const SizedBox(width: 8.0),
-                ElevatedButton(
-                  onPressed: _pickExcelFile,
-                  child: const Text('Import Excel'),
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: _showAddDialog,
+                    child: const Text('Add Classroom'),
+                  ),
+                  const SizedBox(width: 8.0),
+                  ElevatedButton(
+                    onPressed: _pickExcelFile,
+                    child: const Text('Import Excel'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16.0),
             Expanded(
