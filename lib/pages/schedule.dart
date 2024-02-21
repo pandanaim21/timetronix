@@ -75,7 +75,12 @@ class _EditScheduleState extends State<EditSchedule> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else {
-                      List<DropdownMenuItem<String>> facultyItems = [];
+                      List<DropdownMenuItem<String>> facultyItems = [
+                        DropdownMenuItem(
+                          child: Text('Select Faculty'),
+                          value: null,
+                        ),
+                      ];
                       for (var faculty in snapshot.data!) {
                         facultyItems.add(
                           DropdownMenuItem(
@@ -118,7 +123,6 @@ class _EditScheduleState extends State<EditSchedule> {
                   decoration:
                       const InputDecoration(labelText: 'Priority Number'),
                 ),
-                const SizedBox(height: 10),
                 const Text('Select Course:'),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: dbHelper.getCurriculum(),
@@ -126,7 +130,13 @@ class _EditScheduleState extends State<EditSchedule> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else {
-                      List<DropdownMenuItem<String>> courseItems = [];
+                      List<DropdownMenuItem<String>> courseItems = [
+                        DropdownMenuItem(
+                          child: Text('Select Course'),
+                          value: null,
+                        ),
+                      ];
+
                       for (var course in snapshot.data!) {
                         courseItems.add(
                           DropdownMenuItem(
@@ -135,6 +145,7 @@ class _EditScheduleState extends State<EditSchedule> {
                           ),
                         );
                       }
+
                       return DropdownButton<String>(
                         value: selectedCourseId,
                         items: courseItems,
@@ -191,7 +202,13 @@ class _EditScheduleState extends State<EditSchedule> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else {
-                      List<DropdownMenuItem<String>> roomItems = [];
+                      List<DropdownMenuItem<String>> roomItems = [
+                        DropdownMenuItem(
+                          child: Text('Select Room'),
+                          value: null,
+                        ),
+                      ];
+
                       for (var room in snapshot.data!) {
                         roomItems.add(
                           DropdownMenuItem(
@@ -200,6 +217,7 @@ class _EditScheduleState extends State<EditSchedule> {
                           ),
                         );
                       }
+
                       return DropdownButton<String>(
                         value: selectedRoomId,
                         items: roomItems,
