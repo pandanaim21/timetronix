@@ -84,37 +84,41 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
               },
               decoration: const InputDecoration(labelText: 'Description'),
             ),
+            SizedBox(height: 15),
             DropdownButton<String>(
+              isExpanded: true,
               value: _selectedYear,
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedYear = newValue!;
                 });
               },
-              borderRadius: BorderRadius.circular(15.0),
-              alignment: Alignment.center,
+              //borderRadius: BorderRadius.circular(15.0),
+              //alignment: Alignment.center,
               items: widget.yearDropdownItems
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Center(child: Text(value)),
+                  child: Text(value),
                 );
               }).toList(),
             ),
+            SizedBox(height: 15),
             DropdownButton<String>(
+              isExpanded: true,
               value: _selectedSemester,
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedSemester = newValue!;
                 });
               },
-              borderRadius: BorderRadius.circular(15.0),
-              alignment: Alignment.center,
+              //borderRadius: BorderRadius.circular(15.0),
+              //alignment: Alignment.center,
               items: widget.semesterDropdownItems
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Center(child: Text(value)),
+                  child: Text(value),
                 );
               }).toList(),
             ),

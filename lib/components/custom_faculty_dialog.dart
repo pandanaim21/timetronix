@@ -72,37 +72,41 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
               },
               decoration: const InputDecoration(labelText: 'Last Name'),
             ),
+            SizedBox(height: 15),
             DropdownButton<String>(
+              isExpanded: true,
               value: _selectedPosition,
               onChanged: (String? newValue) {
                 setState(() {
                   _selectedPosition = newValue!;
                 });
               },
-              borderRadius: BorderRadius.circular(15.0),
-              alignment: Alignment.center,
+              //borderRadius: BorderRadius.circular(15.0),
+              //alignment: Alignment.center,
               items: widget.positionDropdownItems
                   .map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Center(child: Text(value)),
+                  child: Text(value),
                 );
               }).toList(),
             ),
+            SizedBox(height: 15),
             DropdownButton<int>(
+              isExpanded: true,
               value: _selectedPriorityNumber,
               onChanged: (int? newValue) {
                 setState(() {
                   _selectedPriorityNumber = newValue!;
                 });
               },
-              borderRadius: BorderRadius.circular(15.0),
-              alignment: Alignment.center,
+              //borderRadius: BorderRadius.circular(15.0),
+              //alignment: Alignment.center,
               items: widget.priorityNumberDropdownItems
                   .map<DropdownMenuItem<int>>((int value) {
                 return DropdownMenuItem<int>(
                   value: value,
-                  child: Center(child: Text(value.toString())),
+                  child: Text(value.toString()),
                 );
               }).toList(),
             ),
