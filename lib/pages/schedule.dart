@@ -76,7 +76,7 @@ class _EditScheduleState extends State<EditSchedule> {
                       return const CircularProgressIndicator();
                     } else {
                       List<DropdownMenuItem<String>> facultyItems = [
-                        DropdownMenuItem(
+                        const DropdownMenuItem(
                           child: Text('Select Faculty'),
                           value: null,
                         ),
@@ -131,7 +131,7 @@ class _EditScheduleState extends State<EditSchedule> {
                       return const CircularProgressIndicator();
                     } else {
                       List<DropdownMenuItem<String>> courseItems = [
-                        DropdownMenuItem(
+                        const DropdownMenuItem(
                           child: Text('Select Course'),
                           value: null,
                         ),
@@ -203,7 +203,7 @@ class _EditScheduleState extends State<EditSchedule> {
                       return const CircularProgressIndicator();
                     } else {
                       List<DropdownMenuItem<String>> roomItems = [
-                        DropdownMenuItem(
+                        const DropdownMenuItem(
                           child: Text('Select Room'),
                           value: null,
                         ),
@@ -275,6 +275,7 @@ class _EditScheduleState extends State<EditSchedule> {
                 );
 
                 // Dismiss dialog
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
               },
             ),
