@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:timetronix/components/custom_curriculum_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
