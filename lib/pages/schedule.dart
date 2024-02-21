@@ -33,7 +33,7 @@ class _EditScheduleState extends State<EditSchedule> {
         backgroundColor: Colors.blue[800],
       ),
       body: const Center(
-        child: Text('Edit Schedule Page'),
+        child: Text('Schedule Page'),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
