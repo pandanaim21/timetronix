@@ -12,6 +12,9 @@ class EditSchedule extends StatefulWidget {
 
 class _EditScheduleState extends State<EditSchedule> {
   final dbHelper = DatabaseHelper();
+  // ignore: prefer_collection_literals
+  Set<String> selectedDays = Set();
+
   String? selectedFacultyId;
   String? selectedCourseId;
   String? selectedLecRoomId;
@@ -184,6 +187,20 @@ class _EditScheduleState extends State<EditSchedule> {
                   decoration: const InputDecoration(labelText: 'Frequency'),
                 ),
                 const SizedBox(height: 10),
+                // Row of buttons for days
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildDayButton('M'),
+                    _buildDayButton('T'),
+                    _buildDayButton('W'),
+                    _buildDayButton('TTH'),
+                    _buildDayButton('F'),
+                    _buildDayButton('S'),
+                    _buildDayButton('S'),
+                  ],
+                ),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     FutureBuilder<List<Map<String, dynamic>>>(
@@ -318,6 +335,32 @@ class _EditScheduleState extends State<EditSchedule> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildDayButton(String day) {
+    return SizedBox(
+      width: 60,
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            if (selectedDays.contains(day)) {
+              selectedDays.remove(day);
+            } else {
+              selectedDays.add(day);
+            }
+          });
+        },
+        style: ButtonStyle(
+          backgroundColor: selectedDays.contains(day)
+              ? MaterialStateProperty.all(Colors.blue)
+              : null,
+          foregroundColor: selectedDays.contains(day)
+              ? MaterialStateProperty.all(Colors.white)
+              : null,
+        ),
+        child: Text(day),
+      ),
     );
   }
 }

@@ -106,39 +106,6 @@ class _AddCurriculumState extends State<AddCurriculum> {
     );
   }
 
-  void _pickExcelFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['xlsx', 'xls'],
-    );
-    if (result != null) {
-      String? filePath = result.files.single.path;
-      if (filePath != null) {
-        await _processExcelFile(filePath);
-      }
-    }
-  }
-
-  Future<void> _processExcelFile(String filePath) async {
-    var bytes = File(filePath).readAsBytesSync();
-    var excel = Excel.decodeBytes(bytes);
-    var sheet = excel.tables.keys.first;
-    // Skip, first and second row is header
-    for (var row in excel.tables[sheet]!.rows.skip(2)) {
-      String course = row[0]?.value?.toString() ?? '';
-      String description = row[1]?.value?.toString() ?? '';
-      String year = row[2]?.value?.toString() ?? '';
-      String semester = row[3]?.value?.toString() ?? '';
-      int units = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
-      int hasLabValue = int.tryParse(row[6]?.value?.toString() ?? '') ?? 0;
-      String hasLab = hasLabValue > 0 ? 'YES' : 'NO';
-      String meeting = row[8]?.value?.toString() ?? '';
-      await dbHelper.addCurriculum(
-          course, description, year, semester, units, meeting, hasLab);
-    }
-    loadCurriculums();
-  }
-
   void _showCustomDialog(
       String title,
       String course,
@@ -233,6 +200,39 @@ class _AddCurriculumState extends State<AddCurriculum> {
         );
       },
     );
+  }
+
+  void _pickExcelFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['xlsx', 'xls'],
+    );
+    if (result != null) {
+      String? filePath = result.files.single.path;
+      if (filePath != null) {
+        await _processExcelFile(filePath);
+      }
+    }
+  }
+
+  Future<void> _processExcelFile(String filePath) async {
+    var bytes = File(filePath).readAsBytesSync();
+    var excel = Excel.decodeBytes(bytes);
+    var sheet = excel.tables.keys.first;
+    // Skip, first and second row is header
+    for (var row in excel.tables[sheet]!.rows.skip(2)) {
+      String course = row[0]?.value?.toString() ?? '';
+      String description = row[1]?.value?.toString() ?? '';
+      String year = row[2]?.value?.toString() ?? '';
+      String semester = row[3]?.value?.toString() ?? '';
+      int units = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
+      int hasLabValue = int.tryParse(row[6]?.value?.toString() ?? '') ?? 0;
+      String hasLab = hasLabValue > 0 ? 'YES' : 'NO';
+      String meeting = row[8]?.value?.toString() ?? '';
+      await dbHelper.addCurriculum(
+          course, description, year, semester, units, meeting, hasLab);
+    }
+    loadCurriculums();
   }
 
   void addCurriculum(String course, String description, String year,

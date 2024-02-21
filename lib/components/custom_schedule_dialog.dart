@@ -2,56 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:timetronix/components/dictionary.dart';
 import 'package:timetronix/db/db_helper.dart';
 
-// ignore: must_be_immutable
 class CustomScheduleDialog extends StatefulWidget {
-  String? selectedFacultyId;
-  String? selectedCourseId;
-  String? selectedRoomId;
-  final TextEditingController positionController;
-  final TextEditingController priorityController;
-  final TextEditingController descriptionController;
-  final TextEditingController yearController;
-  final TextEditingController semesterController;
-  final TextEditingController unitsController;
-  final TextEditingController meetingsController;
-  final TextEditingController roomTypeController;
-
-  // final String title;
-  // final List<String> facultyDropdownItems;
-  // final String selectedFacultyDropdownItem;
-  // final String position;
-  // final List<String> courseDropdownItems;
-  // final String selectedCourseDropdownItem;
-  // final String description;
-  // final int units;
-  // final String meeting;
-  // final List<String> roomDropdownItems;
-  // final String selectedRoomDropdownItem;
-  // final Function(String, String, String, String, int, String, String) onSubmit;
-
-  CustomScheduleDialog({
-    Key? key,
-    required this.selectedFacultyId,
-    required this.selectedCourseId,
-    required this.selectedRoomId,
-    required this.positionController,
-    required this.priorityController,
-    required this.descriptionController,
-    required this.yearController,
-    required this.semesterController,
-    required this.unitsController,
-    required this.meetingsController,
-    required this.roomTypeController,
-  }) : super(key: key);
+  const CustomScheduleDialog({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomScheduleDialogState createState() => _CustomScheduleDialogState();
 }
 
 class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
   final dbHelper = DatabaseHelper();
-  String? _selectedStartTime;
-  String? _selectedEndTime;
+
+  String? selectedFacultyId;
+  String? selectedCourseId;
+  String? selectedLecRoomId;
+  String? selectedLabRoomId;
+  int units = 0;
+  String? position;
+  int priorityNumber = 0;
+  String? selectedStartTime;
+  String? selectedEndTime;
+
+  late TextEditingController positionController;
+  late TextEditingController priorityController;
+  late TextEditingController descriptionController;
+  late TextEditingController yearController;
+  late TextEditingController semesterController;
+  late TextEditingController unitsController;
+  late TextEditingController meetingsController;
+
+  @override
+  void initState() {
+    super.initState();
+    positionController = TextEditingController(text: position ?? '');
+    priorityController = TextEditingController(text: priorityNumber.toString());
+    descriptionController = TextEditingController();
+    yearController = TextEditingController();
+    semesterController = TextEditingController();
+    unitsController = TextEditingController(text: units.toString());
+    meetingsController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +51,6 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Select Faculty:'),
             FutureBuilder<List<Map<String, dynamic>>>(
               future: dbHelper.getFaculty(),
               builder: (context, snapshot) {
@@ -84,20 +73,19 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
                     );
                   }
                   return DropdownButton<String>(
-                    value: widget.selectedFacultyId,
+                    isExpanded: true,
+                    value: selectedFacultyId,
                     items: facultyItems,
                     onChanged: (value) async {
                       setState(() {
-                        widget.selectedFacultyId =
-                            value; // This line will throw an error as selectedFacultyId is read-only
+                        selectedFacultyId = value;
                       });
-                      // Fetch faculty details based on selectedFacultyId
-                      Map<String, dynamic> facultyDetails = await dbHelper
-                          .getFacultyDetails(widget.selectedFacultyId);
+                      Map<String, dynamic> facultyDetails =
+                          await dbHelper.getFacultyDetails(selectedFacultyId);
                       setState(() {
-                        widget.positionController.text =
+                        positionController.text =
                             facultyDetails['position'] ?? '';
-                        widget.priorityController.text =
+                        priorityController.text =
                             facultyDetails['priority_number']?.toString() ?? '';
                       });
                     },
@@ -106,15 +94,10 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
               },
             ),
             TextField(
-              controller: widget.positionController,
+              controller: positionController,
               decoration: const InputDecoration(labelText: 'Position'),
             ),
-            TextField(
-              controller: widget.priorityController,
-              decoration: const InputDecoration(labelText: 'Priority Number'),
-            ),
             const SizedBox(height: 10),
-            const Text('Select Course:'),
             FutureBuilder<List<Map<String, dynamic>>>(
               future: dbHelper.getCurriculum(),
               builder: (context, snapshot) {
@@ -136,29 +119,33 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
                       ),
                     );
                   }
-
                   return DropdownButton<String>(
-                    value: widget.selectedCourseId,
+                    isExpanded: true,
+                    value: selectedCourseId,
                     items: courseItems,
                     onChanged: (value) async {
                       setState(() {
-                        widget.selectedCourseId = value;
+                        selectedCourseId = value;
                       });
                       // Fetch course details based on selectedCourseId
-                      Map<String, dynamic> courseDetails = await dbHelper
-                          .getCourseDetails(widget.selectedCourseId);
+                      Map<String, dynamic> courseDetails =
+                          await dbHelper.getCourseDetails(selectedCourseId);
                       setState(() {
-                        // Populate other fields for course if needed
-                        widget.descriptionController.text =
+                        descriptionController.text =
                             courseDetails['description'] ?? '';
-                        widget.yearController.text =
-                            courseDetails['year'] ?? '';
-                        widget.semesterController.text =
+                        yearController.text = courseDetails['year'] ?? '';
+                        semesterController.text =
                             courseDetails['semester'] ?? '';
-                        widget.unitsController.text =
+                        unitsController.text =
                             courseDetails['units']?.toString() ?? '';
-                        widget.meetingsController.text =
+                        meetingsController.text =
                             courseDetails['meeting'] ?? '';
+                        // Check if the course has lab
+                        String hasLab = courseDetails['hasLab'] ?? '';
+                        // Disable the lab room dropdown if the course has no laboratory
+                        if (hasLab == 'NO') {
+                          selectedLabRoomId = null;
+                        }
                       });
                     },
                   );
@@ -166,82 +153,101 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
               },
             ),
             TextField(
-              controller: widget.descriptionController,
+              controller: descriptionController,
               decoration: const InputDecoration(labelText: 'Description'),
             ),
             TextField(
-              controller: widget.yearController,
-              decoration: const InputDecoration(labelText: 'Year'),
-            ),
-            TextField(
-              controller: widget.semesterController,
-              decoration: const InputDecoration(labelText: 'Semester'),
-            ),
-            TextField(
-              controller: widget.unitsController,
+              controller: unitsController,
               decoration: const InputDecoration(labelText: 'Units'),
             ),
             TextField(
-              controller: widget.meetingsController,
-              decoration: const InputDecoration(labelText: 'Meetings'),
+              controller: meetingsController,
+              decoration: const InputDecoration(labelText: 'Frequency'),
             ),
             const SizedBox(height: 10),
-            const Text('Select Room:'),
-            FutureBuilder<List<Map<String, dynamic>>>(
-              future: dbHelper.getClassrooms(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else {
-                  List<DropdownMenuItem<String>> roomItems = [
-                    const DropdownMenuItem(
-                      value: null,
-                      child: Text('Select Room'),
-                    ),
-                  ];
+            Row(
+              children: [
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: dbHelper.getClassrooms(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      List<DropdownMenuItem<String>> roomItems = [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Lecture Room'),
+                        ),
+                      ];
+                      for (var room in snapshot.data!) {
+                        if (room['type'] == 'Lecture Class') {
+                          roomItems.add(
+                            DropdownMenuItem(
+                              value: room['id'].toString(),
+                              child: Text(room['room']),
+                            ),
+                          );
+                        }
+                      }
+                      return DropdownButton<String>(
+                        value: selectedLecRoomId,
+                        items: roomItems,
+                        onChanged: (value) async {
+                          setState(() {
+                            selectedLecRoomId = value;
+                          });
+                        },
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(width: 20),
+                FutureBuilder<List<Map<String, dynamic>>>(
+                  future: dbHelper.getClassrooms(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else {
+                      List<DropdownMenuItem<String>> roomItems = [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Laboratory Room'),
+                        ),
+                      ];
 
-                  for (var room in snapshot.data!) {
-                    roomItems.add(
-                      DropdownMenuItem(
-                        value: room['id'].toString(),
-                        child: Text(room['room']),
-                      ),
-                    );
-                  }
-
-                  return DropdownButton<String>(
-                    value: widget.selectedRoomId,
-                    items: roomItems,
-                    onChanged: (value) async {
-                      setState(() {
-                        widget.selectedRoomId = value;
-                      });
-                      // Fetch room details based on selectedRoomId
-                      Map<String, dynamic> roomDetails =
-                          await dbHelper.getRoomDetails(widget.selectedRoomId);
-                      setState(() {
-                        widget.roomTypeController.text =
-                            roomDetails['type'] ?? '';
-                      });
-                    },
-                  );
-                }
-              },
+                      for (var room in snapshot.data!) {
+                        if (room['type'] == 'Laboratory Class') {
+                          roomItems.add(
+                            DropdownMenuItem(
+                              value: room['id'].toString(),
+                              child: Text(room['room']),
+                            ),
+                          );
+                        }
+                      }
+                      return DropdownButton<String>(
+                        value: selectedLabRoomId,
+                        items: roomItems,
+                        onChanged: (value) async {
+                          setState(() {
+                            selectedLabRoomId = value;
+                          });
+                        },
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
-            TextField(
-              controller: widget.roomTypeController,
-              decoration: const InputDecoration(labelText: 'Room Type'),
-            ),
-            const SizedBox(height: 30),
-            // Start Time Dropdown
+            const SizedBox(height: 10),
             Row(
               children: [
                 const Text('Start Time: '),
                 DropdownButton<String>(
-                  value: _selectedStartTime,
+                  value: selectedStartTime,
                   onChanged: (value) {
                     setState(() {
-                      _selectedStartTime = value;
+                      selectedStartTime = value;
                     });
                   },
                   items: timeSlots.map((String time) {
@@ -251,17 +257,15 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
                     );
                   }).toList(),
                 ),
-              ],
-            ),
-            // End Time Dropdown
-            Row(
-              children: [
+                const SizedBox(width: 10),
+                const Text('-'),
+                const SizedBox(width: 10),
                 const Text('End Time: '),
                 DropdownButton<String>(
-                  value: _selectedEndTime,
+                  value: selectedEndTime,
                   onChanged: (value) {
                     setState(() {
-                      _selectedEndTime = value;
+                      selectedEndTime = value;
                     });
                   },
                   items: timeSlots.map((String time) {
@@ -285,8 +289,8 @@ class _CustomScheduleDialogState extends State<CustomScheduleDialog> {
         ),
         TextButton(
           child: const Text("Add"),
-          onPressed: () {
-            // Perform actions on Add button click
+          onPressed: () async {
+            //implement adding
             Navigator.of(context).pop();
           },
         ),
