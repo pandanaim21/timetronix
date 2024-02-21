@@ -42,12 +42,12 @@ class _AddClassroomState extends State<AddClassroom> {
                 children: [
                   ElevatedButton(
                     onPressed: _showAddDialog,
-                    child: const Text('Add Classroom'),
+                    child: const Text('Add Room'),
                   ),
                   const SizedBox(width: 8.0),
                   ElevatedButton(
                     onPressed: _pickExcelFile,
-                    child: const Text('Import Excel'),
+                    child: const Text('Import Classroom'),
                   ),
                 ],
               ),
@@ -105,16 +105,11 @@ class _AddClassroomState extends State<AddClassroom> {
   Future<void> _processExcelFile(String filePath) async {
     var bytes = File(filePath).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
-
-    // Get the first worksheet
     var sheet = excel.tables.keys.first;
-
     // Skip, first row is header
     for (var row in excel.tables[sheet]!.rows.skip(1)) {
       String lecture = row[0]?.value?.toString() ?? '';
       String laboratory = row[1]?.value?.toString() ?? '';
-
-      // Insert into database
       if (lecture.isNotEmpty) {
         await dbHelper.addClassroom(lecture, 'Lecture Class');
       }
@@ -122,8 +117,6 @@ class _AddClassroomState extends State<AddClassroom> {
         await dbHelper.addClassroom(laboratory, 'Laboratory Class');
       }
     }
-
-    // Reload classrooms after adding
     loadClassrooms();
   }
 
@@ -145,40 +138,44 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   void _showAddDialog() {
-    _showCustomDialog('Add Classroom', '', defaultSelectedType, addClassroom);
+    _showCustomDialog(
+      'Add Room',
+      '',
+      defaultSelectedType,
+      addClassroom,
+    );
   }
 
   void _showEditDialog(Map<String, dynamic> classroom) {
-    _showCustomDialog('Edit Classroom', classroom['room'], classroom['type'], (
-      room,
-      type,
-    ) {
-      updateClassroom(
-        classroom['id'],
-        room,
-        type,
-      );
-    });
+    _showCustomDialog(
+      'Edit Room',
+      classroom['room'],
+      classroom['type'],
+      (room, type) {
+        updateClassroom(
+          classroom['id'],
+          room,
+          type,
+        );
+      },
+    );
   }
 
   void addClassroom(String room, String type) async {
     if (room.isNotEmpty) {
       await dbHelper.addClassroom(room, type);
-      // Reload classrooms after adding
       loadClassrooms();
     }
   }
 
   void removeClassroom(String room) async {
     await dbHelper.removeClassroom(room);
-    // Reload classrooms after removing
     loadClassrooms();
   }
 
   void updateClassroom(int id, String newRoom, String newType) async {
     if (newRoom.isNotEmpty) {
       await dbHelper.editClassroom(id, newRoom, newType);
-      // Reload classrooms after updating
       loadClassrooms();
     }
   }

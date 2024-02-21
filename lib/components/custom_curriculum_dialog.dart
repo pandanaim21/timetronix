@@ -69,7 +69,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
           children: [
             CustomTextField(
               borderColor: Colors.blue,
-              hintText: 'Course',
+              hintText: 'Course Code',
               controller: _courseController,
               textAlign: TextAlign.left,
               symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -83,7 +83,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
             SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
-              hintText: 'Description',
+              hintText: 'Course Description',
               controller: _descriptionController,
               textAlign: TextAlign.left,
               symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -111,7 +111,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
             SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
-              hintText: 'Meeting',
+              hintText: 'Frequency',
               controller: _meetingController,
               textAlign: TextAlign.left,
               symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),

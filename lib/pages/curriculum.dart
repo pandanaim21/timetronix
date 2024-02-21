@@ -42,7 +42,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
                 children: [
                   ElevatedButton(
                     onPressed: _showAddCurriculumDialog,
-                    child: const Text('Add Curriculum'),
+                    child: const Text('Add Course'),
                   ),
                   const SizedBox(width: 8.0),
                   ElevatedButton(
@@ -115,10 +115,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
   Future<void> _processExcelFile(String filePath) async {
     var bytes = File(filePath).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
-
-    // Get the first worksheet
     var sheet = excel.tables.keys.first;
-
     // Skip, first and second row is header
     for (var row in excel.tables[sheet]!.rows.skip(2)) {
       String course = row[0]?.value?.toString() ?? '';
@@ -127,11 +124,15 @@ class _AddCurriculumState extends State<AddCurriculum> {
       String semester = row[3]?.value?.toString() ?? '';
       int units = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
       String meeting = row[8]?.value?.toString() ?? '';
-
       await dbHelper.addCurriculum(
-          course, description, year, semester, units, meeting);
+        course,
+        description,
+        year,
+        semester,
+        units,
+        meeting,
+      );
     }
-
     loadCurriculums();
   }
 
@@ -175,47 +176,59 @@ class _AddCurriculumState extends State<AddCurriculum> {
   }
 
   void _showAddCurriculumDialog() {
-    _showCustomDialog('Add Curriculum', '', '', defaultSelectedYear,
-        defaultSelectedSemester, 0, '',
-        (course, description, selectedYear, selectedSemester, units, meeting) {
-      addCurriculum(
-          course, description, selectedYear, selectedSemester, units, meeting);
-    });
+    _showCustomDialog(
+      'Add Course',
+      '',
+      '',
+      defaultSelectedYear,
+      defaultSelectedSemester,
+      0,
+      '',
+      (course, description, selectedYear, selectedSemester, units, meeting) {
+        addCurriculum(
+          course,
+          description,
+          selectedYear,
+          selectedSemester,
+          units,
+          meeting,
+        );
+      },
+    );
   }
 
   void _showEditCurriculumDialog(Map<String, dynamic> curriculum) {
     _showCustomDialog(
-        'Edit Curriculum',
-        curriculum['course'],
-        curriculum['description'],
-        curriculum['year'],
-        curriculum['semester'],
-        curriculum['units'],
-        curriculum['meeting'],
-        (course, description, selectedYear, selectedSemester, units, meeting) {
-      updateCurriculum(
-        curriculum['id'],
-        course,
-        description,
-        selectedYear,
-        selectedSemester,
-        units,
-        meeting,
-      );
-    });
+      'Edit Course',
+      curriculum['course'],
+      curriculum['description'],
+      curriculum['year'],
+      curriculum['semester'],
+      curriculum['units'],
+      curriculum['meeting'],
+      (course, description, selectedYear, selectedSemester, units, meeting) {
+        updateCurriculum(
+          curriculum['id'],
+          course,
+          description,
+          selectedYear,
+          selectedSemester,
+          units,
+          meeting,
+        );
+      },
+    );
   }
 
   void addCurriculum(String course, String description, String year,
       String semester, int units, String meeting) async {
     await dbHelper.addCurriculum(
         course, description, year, semester, units, meeting);
-    // Reload curriculum after adding
     loadCurriculums();
   }
 
   void removeCurriculum(int id) async {
     await dbHelper.removeCurriculum(id);
-    // Reload curriculum after removing
     loadCurriculums();
   }
 
@@ -223,7 +236,6 @@ class _AddCurriculumState extends State<AddCurriculum> {
       String semester, int units, String meeting) async {
     await dbHelper.editCurriculum(
         id, course, description, year, semester, units, meeting);
-    // Reload curriculum after updating
     loadCurriculums();
   }
 

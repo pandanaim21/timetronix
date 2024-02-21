@@ -113,7 +113,6 @@ class _EditScheduleState extends State<EditSchedule> {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
                 TextField(
                   controller: positionController,
                   decoration: const InputDecoration(labelText: 'Position'),
@@ -123,6 +122,7 @@ class _EditScheduleState extends State<EditSchedule> {
                   decoration:
                       const InputDecoration(labelText: 'Priority Number'),
                 ),
+                const SizedBox(height: 10),
                 const Text('Select Course:'),
                 FutureBuilder<List<Map<String, dynamic>>>(
                   future: dbHelper.getCurriculum(),
@@ -173,7 +173,6 @@ class _EditScheduleState extends State<EditSchedule> {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
                 TextField(
                   controller: descriptionController,
                   decoration: const InputDecoration(labelText: 'Description'),
@@ -236,7 +235,6 @@ class _EditScheduleState extends State<EditSchedule> {
                     }
                   },
                 ),
-                const SizedBox(height: 10),
                 TextField(
                   controller: roomTypeController,
                   decoration: const InputDecoration(labelText: 'Room Type'),
@@ -254,26 +252,24 @@ class _EditScheduleState extends State<EditSchedule> {
             TextButton(
               child: const Text("Add"),
               onPressed: () async {
-                // Add item to database
-                await dbHelper.addFaculty(
-                  "Firstname",
-                  "Lastname",
-                  positionController.text,
-                  int.parse(priorityController.text),
-                );
-                await dbHelper.addCurriculum(
-                  "Course",
-                  descriptionController.text,
-                  yearController.text,
-                  semesterController.text,
-                  int.parse(unitsController.text),
-                  meetingsController.text,
-                );
-                await dbHelper.addClassroom(
-                  "Room",
-                  roomTypeController.text,
-                );
-
+                // await dbHelper.addFaculty(
+                //   "Firstname",
+                //   "Lastname",
+                //   positionController.text,
+                //   int.parse(priorityController.text),
+                // );
+                // await dbHelper.addCurriculum(
+                //   "Course",
+                //   descriptionController.text,
+                //   yearController.text,
+                //   semesterController.text,
+                //   int.parse(unitsController.text),
+                //   meetingsController.text,
+                // );
+                // await dbHelper.addClassroom(
+                //   "Room",
+                //   roomTypeController.text,
+                // );
                 // Dismiss dialog
                 // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();

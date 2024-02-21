@@ -113,20 +113,20 @@ class _AddFacultyState extends State<AddFaculty> {
   Future<void> _processExcelFile(String filePath) async {
     var bytes = File(filePath).readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
-
-    // Get the first worksheet
     var sheet = excel.tables.keys.first;
-
     // Skip, first row is header
     for (var row in excel.tables[sheet]!.rows.skip(1)) {
       String firstName = row[0]?.value?.toString() ?? '';
       String lastName = row[1]?.value?.toString() ?? '';
       String position = row[2]?.value?.toString() ?? '';
       int priorityNumber = int.tryParse(row[3]?.value?.toString() ?? '') ?? 1;
-
-      await dbHelper.addFaculty(firstName, lastName, position, priorityNumber);
+      await dbHelper.addFaculty(
+        firstName,
+        lastName,
+        position,
+        priorityNumber,
+      );
     }
-
     loadFaculties();
   }
 
@@ -152,7 +152,7 @@ class _AddFacultyState extends State<AddFaculty> {
             'Chairperson',
           ],
           selectedPositionDropdownItem: selectedPosition,
-          priorityNumberDropdownItems: [1, 2, 3, 4, 5],
+          priorityNumberDropdownItems: const [1, 2, 3, 4, 5],
           selectedPriorityNumberDropdownItem: selectedPriorityNumber,
           onSubmit: onSubmit,
         );
@@ -162,36 +162,49 @@ class _AddFacultyState extends State<AddFaculty> {
 
   void _showAddFacultyDialog() {
     _showCustomDialog(
-        'Add Faculty', '', '', defaultPosition, defaultPriorityNumber,
-        (firstName, lastName, selectedPosition, selectedPriorityNumber) {
-      addFaculty(firstName, lastName, selectedPosition, selectedPriorityNumber);
-    });
+      'Add Faculty',
+      '',
+      '',
+      defaultPosition,
+      defaultPriorityNumber,
+      (firstName, lastName, selectedPosition, selectedPriorityNumber) {
+        addFaculty(
+          firstName,
+          lastName,
+          selectedPosition,
+          selectedPriorityNumber,
+        );
+      },
+    );
   }
 
   void _showEditFacultyDialog(Map<String, dynamic> faculty) {
-    _showCustomDialog('Edit Faculty', faculty['firstname'], faculty['lastname'],
-        faculty['position'], faculty['priority_number'],
-        (firstName, lastName, selectedPosition, selectedPriorityNumber) {
-      updateFaculty(
-        faculty['id'],
-        firstName,
-        lastName,
-        selectedPosition,
-        selectedPriorityNumber,
-      );
-    });
+    _showCustomDialog(
+      'Edit Faculty',
+      faculty['firstname'],
+      faculty['lastname'],
+      faculty['position'],
+      faculty['priority_number'],
+      (firstName, lastName, selectedPosition, selectedPriorityNumber) {
+        updateFaculty(
+          faculty['id'],
+          firstName,
+          lastName,
+          selectedPosition,
+          selectedPriorityNumber,
+        );
+      },
+    );
   }
 
   void addFaculty(String firstName, String lastName, String position,
       int priorityNumber) async {
     await dbHelper.addFaculty(firstName, lastName, position, priorityNumber);
-    // Reload faculty after adding
     loadFaculties();
   }
 
   void removeFaculty(int id) async {
     await dbHelper.removeFaculty(id);
-    // Reload faculty after removing
     loadFaculties();
   }
 
@@ -199,7 +212,6 @@ class _AddFacultyState extends State<AddFaculty> {
       int priorityNumber) async {
     await dbHelper.editFaculty(
         id, firstName, lastName, position, priorityNumber);
-    // Reload faculty after updating
     loadFaculties();
   }
 
