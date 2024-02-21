@@ -188,8 +188,10 @@ class _AddClassroomState extends State<AddClassroom> {
 
   void loadClassrooms() async {
     List<Map<String, dynamic>> classroomData = await dbHelper.getClassrooms();
-    setState(() {
-      classrooms = classroomData;
-    });
+    setState(
+      () {
+        classrooms = classroomData;
+      },
+    );
   }
 }

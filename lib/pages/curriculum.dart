@@ -247,8 +247,10 @@ class _AddCurriculumState extends State<AddCurriculum> {
 
   void loadCurriculums() async {
     List<Map<String, dynamic>> curriculumData = await dbHelper.getCurriculum();
-    setState(() {
-      curriculums = curriculumData;
-    });
+    setState(
+      () {
+        curriculums = curriculumData;
+      },
+    );
   }
 }

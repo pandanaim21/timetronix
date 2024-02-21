@@ -223,8 +223,10 @@ class _AddFacultyState extends State<AddFaculty> {
 
   void loadFaculties() async {
     List<Map<String, dynamic>> facultyData = await dbHelper.getFaculty();
-    setState(() {
-      faculties = facultyData;
-    });
+    setState(
+      () {
+        faculties = facultyData;
+      },
+    );
   }
 }
