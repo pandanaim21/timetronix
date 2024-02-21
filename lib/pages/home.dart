@@ -4,6 +4,7 @@ import 'package:timetronix/pages/faculty.dart';
 import 'package:timetronix/pages/curriculum.dart';
 import 'package:timetronix/pages/schedule.dart';
 
+
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
