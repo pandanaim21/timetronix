@@ -24,6 +24,7 @@ class CustomFacultyDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomFacultyDialogState createState() => _CustomFacultyDialogState();
 }
 
@@ -68,7 +69,7 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
               hintText: 'Lastname',
@@ -82,7 +83,7 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
@@ -107,7 +108,7 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<int>(

@@ -9,6 +9,7 @@ class AddClassroom extends StatefulWidget {
   const AddClassroom({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddClassroomState createState() => _AddClassroomState();
 }
 

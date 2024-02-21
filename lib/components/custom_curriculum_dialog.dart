@@ -28,6 +28,7 @@ class CustomCurriculumDialog extends StatefulWidget {
   }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomCurriculumDialogState createState() => _CustomCurriculumDialogState();
 }
 
@@ -80,7 +81,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
               hintText: 'Course Description',
@@ -94,7 +95,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
               hintText: 'Units',
@@ -108,7 +109,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CustomTextField(
               borderColor: Colors.blue,
               hintText: 'Frequency',
@@ -122,7 +123,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(
@@ -147,7 +148,7 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 }).toList(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: DropdownButton<String>(

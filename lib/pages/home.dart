@@ -4,7 +4,6 @@ import 'package:timetronix/pages/faculty.dart';
 import 'package:timetronix/pages/curriculum.dart';
 import 'package:timetronix/pages/schedule.dart';
 
-
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -12,7 +11,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'TIMETRONIX',
           style: TextStyle(
             color: Colors.white,
@@ -25,53 +24,54 @@ class Home extends StatelessWidget {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('Sidebar'),
               decoration: BoxDecoration(color: Colors.blue[800]),
+              child: const Text('Sidebar'),
             ),
             ListTile(
-              leading: Icon(Icons.add_box),
-              title: Text('Classroom'),
+              leading: const Icon(Icons.add_box),
+              title: const Text('Classroom'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddClassroom()),
+                  MaterialPageRoute(builder: (context) => const AddClassroom()),
                 );
               },
             ),
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text('Curriculum'),
+              leading: const Icon(Icons.edit),
+              title: const Text('Curriculum'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddCurriculum()),
+                  MaterialPageRoute(
+                      builder: (context) => const AddCurriculum()),
                 );
               },
             ),
             ListTile(
-              leading: Icon(Icons.person_add),
-              title: Text('Faculty'),
+              leading: const Icon(Icons.person_add),
+              title: const Text('Faculty'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddFaculty()),
+                  MaterialPageRoute(builder: (context) => const AddFaculty()),
                 );
               },
             ),
             ListTile(
-              leading: Icon(Icons.schedule),
-              title: Text('Schedule'),
+              leading: const Icon(Icons.schedule),
+              title: const Text('Schedule'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditSchedule()),
+                  MaterialPageRoute(builder: (context) => const EditSchedule()),
                 );
               },
             ),
           ],
         ),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Main Page'),
       ),
     );

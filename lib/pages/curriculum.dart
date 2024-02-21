@@ -9,6 +9,7 @@ class AddCurriculum extends StatefulWidget {
   const AddCurriculum({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddCurriculumState createState() => _AddCurriculumState();
 }
 

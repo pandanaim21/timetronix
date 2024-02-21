@@ -5,6 +5,7 @@ class EditSchedule extends StatefulWidget {
   const EditSchedule({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _EditScheduleState createState() => _EditScheduleState();
 }
 
@@ -39,8 +40,8 @@ class _EditScheduleState extends State<EditSchedule> {
         onPressed: () {
           _showAddItemDialog(context);
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.blue[800],
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -77,17 +78,17 @@ class _EditScheduleState extends State<EditSchedule> {
                     } else {
                       List<DropdownMenuItem<String>> facultyItems = [
                         const DropdownMenuItem(
-                          child: Text('Select Faculty'),
                           value: null,
+                          child: Text('Select Faculty'),
                         ),
                       ];
                       for (var faculty in snapshot.data!) {
                         facultyItems.add(
                           DropdownMenuItem(
+                            value: faculty['id'].toString(),
                             child: Text(faculty['firstname'] +
                                 ' ' +
                                 faculty['lastname']),
-                            value: faculty['id'].toString(),
                           ),
                         );
                       }
@@ -132,16 +133,16 @@ class _EditScheduleState extends State<EditSchedule> {
                     } else {
                       List<DropdownMenuItem<String>> courseItems = [
                         const DropdownMenuItem(
-                          child: Text('Select Course'),
                           value: null,
+                          child: Text('Select Course'),
                         ),
                       ];
 
                       for (var course in snapshot.data!) {
                         courseItems.add(
                           DropdownMenuItem(
-                            child: Text(course['course']),
                             value: course['id'].toString(),
+                            child: Text(course['course']),
                           ),
                         );
                       }
@@ -203,16 +204,16 @@ class _EditScheduleState extends State<EditSchedule> {
                     } else {
                       List<DropdownMenuItem<String>> roomItems = [
                         const DropdownMenuItem(
-                          child: Text('Select Room'),
                           value: null,
+                          child: Text('Select Room'),
                         ),
                       ];
 
                       for (var room in snapshot.data!) {
                         roomItems.add(
                           DropdownMenuItem(
-                            child: Text(room['room']),
                             value: room['id'].toString(),
+                            child: Text(room['room']),
                           ),
                         );
                       }
