@@ -173,4 +173,38 @@ class DatabaseHelper {
     final db = await database;
     return await db.query('Faculty');
   }
+
+  //Getters
+  // Get room details by ID
+  Future<Map<String, dynamic>> getRoomDetails(String? roomId) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'Classroom',
+      where: 'id = ?',
+      whereArgs: [roomId],
+    );
+    return result.isNotEmpty ? result.first : {};
+  }
+
+  // Get course details by ID
+  Future<Map<String, dynamic>> getCourseDetails(String? courseId) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'Curriculum',
+      where: 'id = ?',
+      whereArgs: [courseId],
+    );
+    return result.isNotEmpty ? result.first : {};
+  }
+
+  // Get faculty details by ID
+  Future<Map<String, dynamic>> getFacultyDetails(String? facultyId) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'Faculty',
+      where: 'id = ?',
+      whereArgs: [facultyId],
+    );
+    return result.isNotEmpty ? result.first : {};
+  }
 }
