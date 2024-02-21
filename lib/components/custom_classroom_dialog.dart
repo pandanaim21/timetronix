@@ -59,22 +59,29 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
             },
           ),
           const SizedBox(height: 20),
-          DropdownButton<String>(
-            value: _type,
-            onChanged: (String? newValue) {
-              setState(() {
-                _type = newValue!;
-              });
-            },
-            borderRadius: BorderRadius.circular(12.0),
-            alignment: Alignment.center,
-            items: widget.dropdownItems
-                .map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Center(child: Text(value)),
-              );
-            }).toList(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: _type,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _type = newValue!;
+                });
+              },
+              borderRadius: BorderRadius.circular(12.0),
+              //alignment: Alignment.center,
+              items: widget.dropdownItems
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(value),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 50),
         ],
