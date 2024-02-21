@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'database.db'),
+      join(path, 'naim.db'),
       onCreate: (database, version) async {
         // Create Classroom table
         await database.execute(
@@ -25,6 +25,10 @@ class DatabaseHelper {
         // Create Curriculum table
         await database.execute(
           "CREATE TABLE Curriculum(id INTEGER PRIMARY KEY AUTOINCREMENT, course TEXT, description TEXT, year INTEGER, semester TEXT, units INTEGER, meeting TEXT)",
+        );
+        // Create Faculty table
+        await database.execute(
+          "CREATE TABLE Faculty(id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT, position TEXT, priority_number INTEGER)",
         );
       },
       version: 1,
@@ -123,5 +127,50 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getCurriculum() async {
     final db = await database;
     return await db.query('Curriculum');
+  }
+
+  //faculty
+  Future<int> addFaculty(String firstname, String lastname, String position,
+      int priorityNumber) async {
+    final db = await database;
+    return await db.insert(
+      'Faculty',
+      {
+        'firstname': firstname,
+        'lastname': lastname,
+        'position': position,
+        'priority_number': priorityNumber,
+      },
+    );
+  }
+
+  Future<int> editFaculty(int id, String newFirstname, String newLastname,
+      String newPosition, int newPriorityNumber) async {
+    final db = await database;
+    return await db.update(
+      'Faculty',
+      {
+        'firstname': newFirstname,
+        'lastname': newLastname,
+        'position': newPosition,
+        'priority_number': newPriorityNumber,
+      },
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> removeFaculty(int id) async {
+    final db = await database;
+    return await db.delete(
+      'Faculty',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getFaculty() async {
+    final db = await database;
+    return await db.query('Faculty');
   }
 }
