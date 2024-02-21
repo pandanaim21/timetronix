@@ -73,42 +73,54 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
               decoration: const InputDecoration(labelText: 'Last Name'),
             ),
             SizedBox(height: 15),
-            DropdownButton<String>(
-              isExpanded: true,
-              value: _selectedPosition,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedPosition = newValue!;
-                });
-              },
-              //borderRadius: BorderRadius.circular(15.0),
-              //alignment: Alignment.center,
-              items: widget.positionDropdownItems
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: DropdownButton<String>(
+                isExpanded: true,
+                value: _selectedPosition,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedPosition = newValue!;
+                  });
+                },
+                borderRadius: BorderRadius.circular(12.0),
+                //alignment: Alignment.center,
+                items: widget.positionDropdownItems
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(value),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
             SizedBox(height: 15),
-            DropdownButton<int>(
-              isExpanded: true,
-              value: _selectedPriorityNumber,
-              onChanged: (int? newValue) {
-                setState(() {
-                  _selectedPriorityNumber = newValue!;
-                });
-              },
-              //borderRadius: BorderRadius.circular(15.0),
-              //alignment: Alignment.center,
-              items: widget.priorityNumberDropdownItems
-                  .map<DropdownMenuItem<int>>((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: DropdownButton<int>(
+                isExpanded: true,
+                value: _selectedPriorityNumber,
+                onChanged: (int? newValue) {
+                  setState(() {
+                    _selectedPriorityNumber = newValue!;
+                  });
+                },
+                borderRadius: BorderRadius.circular(12.0),
+                //alignment: Alignment.center,
+                items: widget.priorityNumberDropdownItems
+                    .map<DropdownMenuItem<int>>((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10.0),
+                      child: Text(value.toString()),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ],
         ),
