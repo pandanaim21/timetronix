@@ -84,54 +84,66 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
               },
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: _selectedPosition,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedPosition = newValue!;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12.0),
-                //alignment: Alignment.center,
-                items: widget.positionDropdownItems
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Select Position'),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedPosition,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedPosition = newValue!;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12.0),
+                    items: widget.positionDropdownItems
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: DropdownButton<int>(
-                isExpanded: true,
-                value: _selectedPriorityNumber,
-                onChanged: (int? newValue) {
-                  setState(() {
-                    _selectedPriorityNumber = newValue!;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12.0),
-                //alignment: Alignment.center,
-                items: widget.priorityNumberDropdownItems
-                    .map<DropdownMenuItem<int>>((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(value.toString()),
-                    ),
-                  );
-                }).toList(),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Priority Number'),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<int>(
+                    isExpanded: true,
+                    value: _selectedPriorityNumber,
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        _selectedPriorityNumber = newValue!;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12.0),
+                    items: widget.priorityNumberDropdownItems
+                        .map<DropdownMenuItem<int>>((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(value.toString()),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

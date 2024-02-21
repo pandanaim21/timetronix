@@ -124,54 +124,66 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
               },
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: _selectedYear,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedYear = newValue!;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12.0),
-                //alignment: Alignment.center,
-                items: widget.yearDropdownItems
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Select Year:'),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedYear,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedYear = newValue!;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12.0),
+                    items: widget.yearDropdownItems
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: _selectedSemester,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedSemester = newValue!;
-                  });
-                },
-                borderRadius: BorderRadius.circular(12.0),
-                //alignment: Alignment.center,
-                items: widget.semesterDropdownItems
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Text(value),
-                    ),
-                  );
-                }).toList(),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Select Semester:'),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: _selectedSemester,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _selectedSemester = newValue!;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(12.0),
+                    items: widget.semesterDropdownItems
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

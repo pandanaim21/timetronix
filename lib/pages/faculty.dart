@@ -60,14 +60,16 @@ class _AddFacultyState extends State<AddFaculty> {
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                     child: ListTile(
-                      title: Column(
+                      title: Text(
+                        '${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
+                      ),
+                      subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('First Name: ${faculties[index]['firstname']}'),
-                          Text('Last Name: ${faculties[index]['lastname']}'),
-                          Text('Position: ${faculties[index]['position']}'),
-                          Text(
-                              'Priority Number: ${faculties[index]['priority_number']}'),
+                          Text('${faculties[index]['position']}'),
+                          // Text(
+                          //   'Priority Number: ${faculties[index]['priority_number']}',
+                          // ),
                         ],
                       ),
                       trailing: Row(

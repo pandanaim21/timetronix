@@ -48,7 +48,7 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
           const SizedBox(height: 50),
           CustomTextField(
             borderColor: Colors.blue,
-            hintText: 'Classroom',
+            hintText: 'Room',
             controller: _roomController,
             textAlign: TextAlign.center,
             symmetricPadding: const EdgeInsets.symmetric(horizontal: 45.0),

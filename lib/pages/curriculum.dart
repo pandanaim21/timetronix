@@ -60,16 +60,18 @@ class _AddCurriculumState extends State<AddCurriculum> {
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                     child: ListTile(
-                      title: Column(
+                      title:
+                          Text('Course Code: ${curriculums[index]['course']}'),
+                      subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Course: ${curriculums[index]['course']}'),
                           Text(
-                              'Description: ${curriculums[index]['description']}'),
+                            'Course Description: ${curriculums[index]['description']}',
+                          ),
                           Text('Year: ${curriculums[index]['year']}'),
                           Text('Semester: ${curriculums[index]['semester']}'),
                           Text('Units: ${curriculums[index]['units']}'),
-                          Text('Meeting: ${curriculums[index]['meeting']}'),
+                          Text('Frequency: ${curriculums[index]['meeting']}'),
                         ],
                       ),
                       trailing: Row(
