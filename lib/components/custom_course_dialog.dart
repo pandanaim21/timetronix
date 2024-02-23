@@ -25,122 +25,140 @@ void showCustomClassDialog(
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(className),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (className == 'Lecture Class')
-              DropdownButton<String>(
-                isExpanded: true,
-                items: lectureRoomDropdownItems,
-                onChanged: onLectureRoomChanged,
-                value: selectedLectureRoom,
-                hint: const Text('Select Lecture Room'),
-              ),
-            if (className == 'Laboratory Class')
-              DropdownButton<String>(
-                isExpanded: true,
-                items: laboratoryRoomDropdownItems,
-                onChanged: onLaboratoryRoomChanged,
-                value: selectedLaboratoryRoom,
-                hint: const Text('Select Laboratory Room'),
-              ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: days
-                  .map(
-                    (day) => IconButton(
-                      onPressed: () {
-                        onDayPressed(day);
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text(className),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (className == 'Lecture Class')
+                  DropdownButton<String>(
+                    isExpanded: true,
+                    items: lectureRoomDropdownItems,
+                    onChanged: (value) {
+                      onLectureRoomChanged(value);
+                      setState(() {
+                        selectedLectureRoom = value;
+                      });
+                    },
+                    value: selectedLectureRoom,
+                    hint: const Text('Select Lecture Room'),
+                  ),
+                if (className == 'Laboratory Class')
+                  DropdownButton<String>(
+                    isExpanded: true,
+                    items: laboratoryRoomDropdownItems,
+                    onChanged: (value) {
+                      onLaboratoryRoomChanged(value);
+                      setState(() {
+                        selectedLaboratoryRoom = value;
+                      });
+                    },
+                    value: selectedLaboratoryRoom,
+                    hint: const Text('Select Laboratory Room'),
+                  ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: days
+                      .map(
+                        (day) => IconButton(
+                          onPressed: () {
+                            onDayPressed(day);
+                            setState(() {}); // State changed, trigger rebuild
+                          },
+                          icon: Text(
+                            day,
+                            style: TextStyle(
+                              color: (className == 'Lecture Class'
+                                          ? selectedLectureDays
+                                          : selectedLabDays)
+                                      .contains(day)
+                                  ? Colors.red[900]
+                                  : Colors.black,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          onLectureStartTimeSelected(
+                              picked.hour, picked.minute);
+                          setState(() {}); // State changed, trigger rebuild
+                        }
                       },
-                      icon: Text(
-                        day,
-                        style: TextStyle(
-                          color: (className == 'Lecture Class'
-                                      ? selectedLectureDays
-                                      : selectedLabDays)
-                                  .contains(day)
-                              ? Colors.red[900]
-                              : Colors.black,
+                      child: SizedBox(
+                        width: 150,
+                        child: Text(
+                          (className == 'Lecture Class'
+                                  ? selectedLectureStartTime
+                                  : selectedLabStartTime) ??
+                              'Select Start Time',
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 25),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? picked = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (picked != null) {
-                      onLectureStartTimeSelected(picked.hour, picked.minute);
-                    }
-                  },
-                  child: SizedBox(
-                    width: 150,
-                    child: Text(
-                      (className == 'Lecture Class'
-                              ? selectedLectureStartTime
-                              : selectedLabStartTime) ??
-                          'Select Start Time',
-                      textAlign: TextAlign.center,
+                    const SizedBox(width: 10),
+                    const Text(' - '),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final TimeOfDay? picked = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+                        if (picked != null) {
+                          onLectureEndTimeSelected(picked.hour, picked.minute);
+                          setState(() {}); // State changed, trigger rebuild
+                        }
+                      },
+                      child: SizedBox(
+                        width: 150,
+                        child: Text(
+                          (className == 'Lecture Class'
+                                  ? selectedLectureEndTime
+                                  : selectedLabEndTime) ??
+                              'Select End Time',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-                const SizedBox(width: 10),
-                const Text(' - '),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () async {
-                    final TimeOfDay? picked = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (picked != null) {
-                      onLectureEndTimeSelected(picked.hour, picked.minute);
-                    }
-                  },
-                  child: SizedBox(
-                    width: 150,
-                    child: Text(
-                      (className == 'Lecture Class'
-                              ? selectedLectureEndTime
-                              : selectedLabEndTime) ??
-                          'Select End Time',
-                      textAlign: TextAlign.center,
+                const SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
                     ),
-                  ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Save'),
+                    ),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 25),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Cancel'),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Save'),
-                ),
-              ],
-            ),
-          ],
-        ),
+          );
+        },
       );
     },
   );

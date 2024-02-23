@@ -125,67 +125,53 @@ class _AddAssignsState extends State<AddAssigns> {
       _selectedLabEndTime,
       _days,
       (String? value) {
-        setState(() {
-          _selectedLectureRoom = value;
-        });
+        _selectedLectureRoom = value;
       },
       (String? value) {
-        setState(() {
-          _selectedLaboratoryRoom = value;
-        });
+        _selectedLaboratoryRoom = value;
       },
       (String day) {
-        setState(() {
-          if (className == 'Lecture Class') {
-            if (_selectedLectureDays.contains(day)) {
-              _selectedLectureDays.remove(day);
-            } else {
-              _selectedLectureDays.add(day);
-            }
+        if (className == 'Lecture Class') {
+          if (_selectedLectureDays.contains(day)) {
+            _selectedLectureDays.remove(day);
           } else {
-            if (_selectedLabDays.contains(day)) {
-              _selectedLabDays.remove(day);
-            } else {
-              _selectedLabDays.add(day);
-            }
+            _selectedLectureDays.add(day);
           }
-        });
+        } else {
+          if (_selectedLabDays.contains(day)) {
+            _selectedLabDays.remove(day);
+          } else {
+            _selectedLabDays.add(day);
+          }
+        }
       },
       (int hour, int minute) {
-        setState(() {
-          if (className == 'Lecture Class') {
-            _selectedLectureStartTime = _formatTime(hour, minute);
-          } else {
-            _selectedLabStartTime = _formatTime(hour, minute);
-          }
-        });
+        if (className == 'Lecture Class') {
+          _selectedLectureStartTime = _formatTime(hour, minute);
+        } else {
+          _selectedLabStartTime = _formatTime(hour, minute);
+        }
       },
       (int hour, int minute) {
-        setState(() {
-          if (className == 'Lecture Class') {
-            _selectedLectureEndTime = _formatTime(hour, minute);
-          } else {
-            _selectedLabEndTime = _formatTime(hour, minute);
-          }
-        });
+        if (className == 'Lecture Class') {
+          _selectedLectureEndTime = _formatTime(hour, minute);
+        } else {
+          _selectedLabEndTime = _formatTime(hour, minute);
+        }
       },
       (int hour, int minute) {
-        setState(() {
-          if (className == 'Lecture Class') {
-            _selectedLectureStartTime = _formatTime(hour, minute);
-          } else {
-            _selectedLabStartTime = _formatTime(hour, minute);
-          }
-        });
+        if (className == 'Lecture Class') {
+          _selectedLectureStartTime = _formatTime(hour, minute);
+        } else {
+          _selectedLabStartTime = _formatTime(hour, minute);
+        }
       },
       (int hour, int minute) {
-        setState(() {
-          if (className == 'Lecture Class') {
-            _selectedLectureEndTime = _formatTime(hour, minute);
-          } else {
-            _selectedLabEndTime = _formatTime(hour, minute);
-          }
-        });
+        if (className == 'Lecture Class') {
+          _selectedLectureEndTime = _formatTime(hour, minute);
+        } else {
+          _selectedLabEndTime = _formatTime(hour, minute);
+        }
       },
     );
   }
@@ -291,14 +277,10 @@ class _AddAssignsState extends State<AddAssigns> {
             _facultyDropdownItems,
             _courseDropdownItems,
             (String? value) {
-              setState(() {
-                _selectedFaculty = value;
-              });
+              _selectedFaculty = value;
             },
             (String? value) {
-              setState(() {
-                _selectedCourse = value;
-              });
+              _selectedCourse = value;
             },
             () {
               _showClassDialog('Lecture Class');
