@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/custom_assign_dialog.dart';
+import 'package:timetronix/components/custom_showClass_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
 
 class AddAssigns extends StatefulWidget {
@@ -108,165 +110,83 @@ class _AddAssignsState extends State<AddAssigns> {
     return result.first;
   }
 
-  void _showClassDialog(String className) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(className),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (className == 'Lecture Class')
-                DropdownButton<String>(
-                  items: _lectureRoomDropdownItems,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedLectureRoom = value;
-                    });
-                  },
-                  value: _selectedLectureRoom,
-                  hint: const Text('Select Lecture Room'),
-                ),
-              if (className == 'Laboratory Class')
-                DropdownButton<String>(
-                  items: _laboratoryRoomDropdownItems,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedLaboratoryRoom = value;
-                    });
-                  },
-                  value: _selectedLaboratoryRoom,
-                  hint: const Text('Select Laboratory Room'),
-                ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _days
-                    .map(
-                      (day) => IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (className == 'Lecture Class') {
-                              if (_selectedLectureDays.contains(day)) {
-                                _selectedLectureDays.remove(day);
-                              } else {
-                                _selectedLectureDays.add(day);
-                              }
-                            } else {
-                              if (_selectedLabDays.contains(day)) {
-                                _selectedLabDays.remove(day);
-                              } else {
-                                _selectedLabDays.add(day);
-                              }
-                            }
-                          });
-                        },
-                        icon: Text(
-                          day,
-                          style: TextStyle(
-                            color: (className == 'Lecture Class'
-                                        ? _selectedLectureDays
-                                        : _selectedLabDays)
-                                    .contains(day)
-                                ? Colors.red[900]
-                                : Colors.black,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 25),
-              Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      final TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          if (className == 'Lecture Class') {
-                            _selectedLectureStartTime =
-                                _formatTime(picked.hour, picked.minute);
-                          } else {
-                            _selectedLabStartTime =
-                                _formatTime(picked.hour, picked.minute);
-                          }
-                        });
-                      }
-                    },
-                    child: SizedBox(
-                      width: 150, // Set a fixed width
-                      child: Text(
-                        (className == 'Lecture Class'
-                                ? _selectedLectureStartTime
-                                : _selectedLabStartTime) ??
-                            'Select Start Time',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(' - '),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final TimeOfDay? picked = await showTimePicker(
-                        context: context,
-                        initialTime: TimeOfDay.now(),
-                      );
-                      if (picked != null) {
-                        setState(() {
-                          if (className == 'Lecture Class') {
-                            _selectedLectureEndTime =
-                                _formatTime(picked.hour, picked.minute);
-                          } else {
-                            _selectedLabEndTime =
-                                _formatTime(picked.hour, picked.minute);
-                          }
-                        });
-                      }
-                    },
-                    child: SizedBox(
-                      width: 150, // Set a fixed width
-                      child: Text(
-                        (className == 'Lecture Class'
-                                ? _selectedLectureEndTime
-                                : _selectedLabEndTime) ??
-                            'Select End Time',
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Implement save functionality
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Implement save functionality
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Save'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
+  _showClassDialog(String className) {
+    showCustomClassDialog(
+      context,
+      className,
+      _lectureRoomDropdownItems,
+      _laboratoryRoomDropdownItems,
+      _selectedLectureDays,
+      _selectedLabDays,
+      _selectedLectureRoom,
+      _selectedLaboratoryRoom,
+      _selectedLectureStartTime,
+      _selectedLectureEndTime,
+      _selectedLabStartTime,
+      _selectedLabEndTime,
+      _days,
+      (String? value) {
+        setState(() {
+          _selectedLectureRoom = value;
+        });
+      },
+      (String? value) {
+        setState(() {
+          _selectedLaboratoryRoom = value;
+        });
+      },
+      (String day) {
+        setState(() {
+          if (className == 'Lecture Class') {
+            if (_selectedLectureDays.contains(day)) {
+              _selectedLectureDays.remove(day);
+            } else {
+              _selectedLectureDays.add(day);
+            }
+          } else {
+            if (_selectedLabDays.contains(day)) {
+              _selectedLabDays.remove(day);
+            } else {
+              _selectedLabDays.add(day);
+            }
+          }
+        });
+      },
+      (int hour, int minute) {
+        setState(() {
+          if (className == 'Lecture Class') {
+            _selectedLectureStartTime = _formatTime(hour, minute);
+          } else {
+            _selectedLabStartTime = _formatTime(hour, minute);
+          }
+        });
+      },
+      (int hour, int minute) {
+        setState(() {
+          if (className == 'Lecture Class') {
+            _selectedLectureEndTime = _formatTime(hour, minute);
+          } else {
+            _selectedLabEndTime = _formatTime(hour, minute);
+          }
+        });
+      },
+      (int hour, int minute) {
+        setState(() {
+          if (className == 'Lecture Class') {
+            _selectedLectureStartTime = _formatTime(hour, minute);
+          } else {
+            _selectedLabStartTime = _formatTime(hour, minute);
+          }
+        });
+      },
+      (int hour, int minute) {
+        setState(() {
+          if (className == 'Lecture Class') {
+            _selectedLectureEndTime = _formatTime(hour, minute);
+          } else {
+            _selectedLabEndTime = _formatTime(hour, minute);
+          }
+        });
       },
     );
   }
@@ -283,74 +203,6 @@ class _AddAssignsState extends State<AddAssigns> {
       appBar: AppBar(
         title: const Text('Assign Faculty'),
         backgroundColor: Colors.blue[800],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Assign'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    DropdownButton<String>(
-                      isExpanded: true,
-                      items: _facultyDropdownItems,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedFaculty = value;
-                        });
-                      },
-                      value: _selectedFaculty,
-                      hint: const Text('Select Faculty'),
-                    ),
-                    const SizedBox(height: 10),
-                    DropdownButton<String>(
-                      isExpanded: true,
-                      items: _courseDropdownItems,
-                      onChanged: (String? value) {
-                        setState(() {
-                          _selectedCourse = value;
-                        });
-                      },
-                      value: _selectedCourse,
-                      hint: const Text('Select Course'),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            _showClassDialog('Lecture Class');
-                          },
-                          child: const Text('Lecture Class'),
-                        ),
-                        const SizedBox(width: 15),
-                        ElevatedButton(
-                          onPressed: () {
-                            _showClassDialog('Laboratory Class');
-                          },
-                          child: const Text('Laboratory Class'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        addAssign();
-                        // Call the addAssign function here
-                      },
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-        child: const Icon(Icons.add),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -386,7 +238,7 @@ class _AddAssignsState extends State<AddAssigns> {
                                   Text(
                                     'Course: ${assignmentDetails?['course']}',
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 10),
                                   const Text('Lecture Class:'),
                                   Text(
                                     'Lecture Days: ${assigns[index]['lecture_day']}',
@@ -400,27 +252,8 @@ class _AddAssignsState extends State<AddAssigns> {
                                   Text(
                                     'Lecture Room: ${assignmentDetails?['room']}',
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Card(
-                            elevation: 2,
-                            child: ListTile(
-                              title: const Text('Laboratory Class:'),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Priority Number: ${assigns[index]['priority_number']}',
-                                  ),
-                                  Text(
-                                    'Faculty: ${assignmentDetails?['faculty_firstname']}',
-                                  ),
-                                  Text(
-                                    'Course: ${assignmentDetails?['course']}',
-                                  ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 10),
+                                  const Text('Laboratory Class:'),
                                   Text(
                                     'Laboratory Days: ${assigns[index]['laboratory_day']}',
                                   ),
@@ -445,6 +278,35 @@ class _AddAssignsState extends State<AddAssigns> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showCustomAssignDialog(
+            context,
+            _facultyDropdownItems,
+            _courseDropdownItems,
+            (String? value) {
+              setState(() {
+                _selectedFaculty = value;
+              });
+            },
+            (String? value) {
+              setState(() {
+                _selectedCourse = value;
+              });
+            },
+            () {
+              _showClassDialog('Lecture Class');
+            },
+            () {
+              _showClassDialog('Laboratory Class');
+            },
+            () {
+              addAssign();
+            },
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

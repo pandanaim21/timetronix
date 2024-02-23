@@ -226,8 +226,8 @@ class _AddCurriculumState extends State<AddCurriculum> {
       String year = row[2]?.value?.toString() ?? '';
       String semester = row[3]?.value?.toString() ?? '';
       int units = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
-      int hasLabValue = int.tryParse(row[6]?.value?.toString() ?? '') ?? 0;
-      String hasLab = hasLabValue > 0 ? 'YES' : 'NO';
+      int labUnits = int.tryParse(row[6]?.value?.toString() ?? '') ?? 0;
+      String hasLab = labUnits > 0 ? 'YES' : 'NO';
       String meeting = row[8]?.value?.toString() ?? '';
       await dbHelper.addCurriculum(
           course, description, year, semester, units, meeting, hasLab);
