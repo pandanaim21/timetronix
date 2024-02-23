@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/pages/assign.dart';
 import 'package:timetronix/pages/classroom.dart';
 import 'package:timetronix/pages/faculty.dart';
 import 'package:timetronix/pages/curriculum.dart';
-import 'package:timetronix/pages/schedule.dart';
+//import 'package:timetronix/pages/assign.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -60,11 +61,11 @@ class Home extends StatelessWidget {
             ),
             ListTile(
               leading: const Icon(Icons.schedule),
-              title: const Text('Schedule'),
+              title: const Text('Assign Faculty'),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const EditSchedule()),
+                  MaterialPageRoute(builder: (context) => const AddAssigns()),
                 );
               },
             ),

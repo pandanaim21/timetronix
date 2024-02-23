@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'db.db'),
+      join(path, 'naim.db'),
       onCreate: (database, version) async {
         // Create Classroom table
         await database.execute(
@@ -30,9 +30,9 @@ class DatabaseHelper {
         await database.execute(
           "CREATE TABLE Faculty(id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT, position TEXT, priority_number INTEGER)",
         );
-        // Create Assign table
+        // Create Assign table with foreign key constraints
         await database.execute(
-          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_name TEXT, course TEXT, lecture_day TEXT, lecture_time TEXT, lecture_room TEXT, laboratory_day TEXT, laboratory_time TEXT, laboratory_room TEXT, priority_number INTEGER)",
+          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, lecture_day TEXT, lecture_start_time TEXT, lecture_end_time TEXT, laboratory_day TEXT, laboratory_start_time TEXT, laboratory_end_time TEXT, priority_number INTEGER, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
         );
       },
       version: 1,
@@ -183,27 +183,29 @@ class DatabaseHelper {
 
   // Assign
   Future<int> addAssign(
-      String facultyName,
-      String course,
+      int facultyId,
+      int courseId,
+      int classroomId,
       String lectureDay,
-      String lectureTime,
-      String lectureRoom,
+      String lectureStartTime,
+      String lectureEndTime,
       String laboratoryDay,
-      String laboratoryTime,
-      String laboratoryRoom,
+      String laboratoryStartTime,
+      String laboratoryEndTime,
       int priorityNumber) async {
     final db = await database;
     return await db.insert(
       'Assign',
       {
-        'faculty_name': facultyName,
-        'course': course,
+        'faculty_id': facultyId,
+        'course_id': courseId,
+        'classroom_id': classroomId,
         'lecture_day': lectureDay,
-        'lecture_time': lectureTime,
-        'lecture_room': lectureRoom,
+        'lecture_start_time': lectureStartTime,
+        'lecture_end_time': lectureEndTime,
         'laboratory_day': laboratoryDay,
-        'laboratory_time': laboratoryTime,
-        'laboratory_room': laboratoryRoom,
+        'laboratory_start_time': laboratoryStartTime,
+        'laboratory_end_time': laboratoryEndTime,
         'priority_number': priorityNumber
       },
     );
@@ -211,27 +213,29 @@ class DatabaseHelper {
 
   Future<int> editAssign(
       int id,
-      String newFacultyName,
-      String newCourse,
+      int newFacultyId,
+      int newCourseId,
+      int newClassroomId,
       String newLectureDay,
-      String newLectureTime,
-      String newLectureRoom,
+      String newLectureStartTime,
+      String newLectureEndTime,
       String newLaboratoryDay,
-      String newLaboratoryTime,
-      String newLaboratoryRoom,
+      String newLaboratoryStartTime,
+      String newLaboratoryEndTime,
       int newPriorityNumber) async {
     final db = await database;
     return await db.update(
       'Assign',
       {
-        'faculty_name': newFacultyName,
-        'course': newCourse,
+        'faculty_id': newFacultyId,
+        'course_id': newCourseId,
+        'classroom_id': newClassroomId,
         'lecture_day': newLectureDay,
-        'lecture_time': newLectureTime,
-        'lecture_room': newLectureRoom,
+        'lecture_start_time': newLectureStartTime,
+        'lecture_end_time': newLectureEndTime,
         'laboratory_day': newLaboratoryDay,
-        'laboratory_time': newLaboratoryTime,
-        'laboratory_room': newLaboratoryRoom,
+        'laboratory_start_time': newLaboratoryStartTime,
+        'laboratory_end_time': newLaboratoryEndTime,
         'priority_number': newPriorityNumber
       },
       where: "id = ?",
@@ -248,7 +252,7 @@ class DatabaseHelper {
     );
   }
 
-  Future<List<Map<String, dynamic>>> getAssigns() async {
+  Future<List<Map<String, dynamic>>> getAssign() async {
     final db = await database;
     return await db.query('Assign');
   }
@@ -288,13 +292,18 @@ class DatabaseHelper {
   }
 
   // Get assignment details by ID
-  Future<Map<String, dynamic>> getAssignmentDetails(int? assignmentId) async {
-    final db = await database;
-    List<Map<String, dynamic>> result = await db.query(
-      'Assign',
-      where: 'id = ?',
-      whereArgs: [assignmentId],
-    );
-    return result.isNotEmpty ? result.first : {};
+  Future<Map<String, dynamic>> getAssignmentDetails(
+      Map<String, dynamic> assign) async {
+    final db = await initializeDatabase();
+    final result = await db.rawQuery('''
+    SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+    FROM Assign
+    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
+    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
+    WHERE Assign.id = ?
+  ''', [assign['id']]);
+    await db.close();
+    return result.first;
   }
 }

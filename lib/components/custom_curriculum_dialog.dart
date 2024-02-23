@@ -7,11 +7,11 @@ class CustomCurriculumDialog extends StatefulWidget {
   final String description;
   final List<String> yearDropdownItems;
   final List<String> semesterDropdownItems;
-  final List<String> hasLabDropdownItems;
   final String selectedYearDropdownItem;
   final String selectedSemesterDropdownItem;
   final int units;
   final String meeting;
+  final List<String> hasLabDropdownItems;
   final String selectedHasLabDropdownItem;
   final Function(String, String, String, String, int, String, String) onSubmit;
 
@@ -26,9 +26,9 @@ class CustomCurriculumDialog extends StatefulWidget {
     required this.selectedSemesterDropdownItem,
     required this.units,
     required this.meeting,
-    required this.onSubmit,
     required this.hasLabDropdownItems,
     required this.selectedHasLabDropdownItem,
+    required this.onSubmit,
   }) : super(key: key);
 
   @override
