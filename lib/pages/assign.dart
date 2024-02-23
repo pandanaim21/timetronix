@@ -125,10 +125,11 @@ class _AddAssignsState extends State<AddAssigns> {
       _selectedLabEndTime,
       _days,
       (String? value) {
-        _selectedLectureRoom = value;
-      },
-      (String? value) {
-        _selectedLaboratoryRoom = value;
+        if (className == 'Lecture Class') {
+          _selectedLectureRoom = value;
+        } else {
+          _selectedLaboratoryRoom = value;
+        }
       },
       (String day) {
         if (className == 'Lecture Class') {
@@ -143,20 +144,6 @@ class _AddAssignsState extends State<AddAssigns> {
           } else {
             _selectedLabDays.add(day);
           }
-        }
-      },
-      (int hour, int minute) {
-        if (className == 'Lecture Class') {
-          _selectedLectureStartTime = _formatTime(hour, minute);
-        } else {
-          _selectedLabStartTime = _formatTime(hour, minute);
-        }
-      },
-      (int hour, int minute) {
-        if (className == 'Lecture Class') {
-          _selectedLectureEndTime = _formatTime(hour, minute);
-        } else {
-          _selectedLabEndTime = _formatTime(hour, minute);
         }
       },
       (int hour, int minute) {

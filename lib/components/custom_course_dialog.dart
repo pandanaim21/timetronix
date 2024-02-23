@@ -14,13 +14,10 @@ void showCustomClassDialog(
   String? selectedLabStartTime,
   String? selectedLabEndTime,
   List<String> days,
-  Function(String?) onLectureRoomChanged,
-  Function(String?) onLaboratoryRoomChanged,
+  Function(String?) onRoomChanged,
   Function(String) onDayPressed,
-  Function(int, int) onLectureStartTimeSelected,
-  Function(int, int) onLectureEndTimeSelected,
-  Function(int, int) onLabStartTimeSelected,
-  Function(int, int) onLabEndTimeSelected,
+  Function(int, int) onStartTimeSelected,
+  Function(int, int) onEndTimeSelected,
 ) {
   showDialog(
     context: context,
@@ -32,32 +29,31 @@ void showCustomClassDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (className == 'Lecture Class')
-                  DropdownButton<String>(
-                    isExpanded: true,
-                    items: lectureRoomDropdownItems,
-                    onChanged: (value) {
-                      onLectureRoomChanged(value);
+                DropdownButton<String>(
+                  isExpanded: true,
+                  items: className == 'Lecture Class'
+                      ? lectureRoomDropdownItems
+                      : laboratoryRoomDropdownItems,
+                  onChanged: (value) {
+                    if (className == 'Lecture Class') {
+                      onRoomChanged(value);
                       setState(() {
                         selectedLectureRoom = value;
                       });
-                    },
-                    value: selectedLectureRoom,
-                    hint: const Text('Select Lecture Room'),
-                  ),
-                if (className == 'Laboratory Class')
-                  DropdownButton<String>(
-                    isExpanded: true,
-                    items: laboratoryRoomDropdownItems,
-                    onChanged: (value) {
-                      onLaboratoryRoomChanged(value);
+                    } else if (className == 'Laboratory Class') {
+                      onRoomChanged(value);
                       setState(() {
                         selectedLaboratoryRoom = value;
                       });
-                    },
-                    value: selectedLaboratoryRoom,
-                    hint: const Text('Select Laboratory Room'),
-                  ),
+                    }
+                  },
+                  value: className == 'Lecture Class'
+                      ? selectedLectureRoom
+                      : selectedLaboratoryRoom,
+                  hint: className == 'Lecture Class'
+                      ? const Text('Select Lecture Room')
+                      : const Text('Select Laboratory Room'),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,8 +89,7 @@ void showCustomClassDialog(
                           initialTime: TimeOfDay.now(),
                         );
                         if (picked != null) {
-                          onLectureStartTimeSelected(
-                              picked.hour, picked.minute);
+                          onStartTimeSelected(picked.hour, picked.minute);
                           setState(() {}); // State changed, trigger rebuild
                         }
                       },
@@ -119,7 +114,7 @@ void showCustomClassDialog(
                           initialTime: TimeOfDay.now(),
                         );
                         if (picked != null) {
-                          onLectureEndTimeSelected(picked.hour, picked.minute);
+                          onEndTimeSelected(picked.hour, picked.minute);
                           setState(() {}); // State changed, trigger rebuild
                         }
                       },
