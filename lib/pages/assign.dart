@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:timetronix/components/custom_assign_dialog.dart';
-import 'package:timetronix/components/custom_showClass_dialog.dart';
+import 'package:timetronix/components/custom_course_dialog.dart';
 import 'package:timetronix/db/db_helper.dart';
 
 class AddAssigns extends StatefulWidget {
@@ -106,7 +106,6 @@ class _AddAssignsState extends State<AddAssigns> {
     INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
     WHERE Assign.id = ?
   ''', [assign['id']]);
-    //await db.close();
     return result.first;
   }
 
@@ -268,6 +267,12 @@ class _AddAssignsState extends State<AddAssigns> {
                                   ),
                                 ],
                               ),
+                              trailing: IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  removeAssign(assigns[index]['id']);
+                                },
+                              ),
                             ),
                           ),
                         ],
@@ -335,6 +340,11 @@ class _AddAssignsState extends State<AddAssigns> {
         1,
       );
     }
+    _loadData();
+  }
+
+  void removeAssign(int id) async {
+    await dbHelper.removeAssign(id);
     _loadData();
   }
 }

@@ -9,8 +9,8 @@ showCustomAssignDialog(
     Function() onLectureClassSelected,
     Function() onLaboratoryClassSelected,
     Function() onSubmit) {
-  String? _selectedFaculty;
-  String? _selectedCourse;
+  String? selectedFaculty;
+  String? selectedCourse;
 
   showDialog(
     context: context,
@@ -26,7 +26,7 @@ showCustomAssignDialog(
               onChanged: (String? value) {
                 onFacultySelected(value);
               },
-              value: _selectedFaculty,
+              value: selectedFaculty,
               hint: const Text('Select Faculty'),
             ),
             const SizedBox(height: 10),
@@ -36,7 +36,7 @@ showCustomAssignDialog(
               onChanged: (String? value) {
                 onCourseSelected(value);
               },
-              value: _selectedCourse,
+              value: selectedCourse,
               hint: const Text('Select Course'),
             ),
             const SizedBox(height: 20),
