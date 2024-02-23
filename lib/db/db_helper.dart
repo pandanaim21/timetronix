@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'naim.db'),
+      join(path, 'database.db'),
       onCreate: (database, version) async {
         // Create Classroom table
         await database.execute(
@@ -185,7 +185,7 @@ class DatabaseHelper {
   Future<int> addAssign(
       int facultyId,
       int courseId,
-      int classroomId,
+      int lecRoomId,
       String lectureDay,
       String lectureStartTime,
       String lectureEndTime,
@@ -199,7 +199,7 @@ class DatabaseHelper {
       {
         'faculty_id': facultyId,
         'course_id': courseId,
-        'classroom_id': classroomId,
+        'classroom_id': lecRoomId,
         'lecture_day': lectureDay,
         'lecture_start_time': lectureStartTime,
         'lecture_end_time': lectureEndTime,
@@ -303,7 +303,6 @@ class DatabaseHelper {
     INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
     WHERE Assign.id = ?
   ''', [assign['id']]);
-    await db.close();
     return result.first;
   }
 }

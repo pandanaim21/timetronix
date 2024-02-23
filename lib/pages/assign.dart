@@ -358,16 +358,6 @@ class _AddAssignsState extends State<AddAssigns> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Assignments',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
               for (var index = 0; index < assigns.length; index++)
                 FutureBuilder(
                   future: getAssignmentDetails(assigns[index]),
@@ -378,37 +368,76 @@ class _AddAssignsState extends State<AddAssigns> {
                       return Text('Error: ${snapshot.error}');
                     } else {
                       final assignmentDetails = snapshot.data;
-                      return Card(
-                        elevation: 2,
-                        child: ListTile(
-                          title: Text('Assignment ${index + 1}'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  'Priority Number: ${assigns[index]['priority_number']}'),
-                              Text(
-                                  'Faculty: ${assignmentDetails?['faculty_firstname']}'),
-                              Text('Course: ${assignmentDetails?['course']}'),
-                              const SizedBox(height: 20),
-                              const Text('Lecture Class:'),
-                              Text(
-                                  'Lecture Days: ${assigns[index]['lecture_day']}'),
-                              Text(
-                                  'Lecture Start Time: ${assigns[index]['lecture_start_time']}'),
-                              Text(
-                                  'Lecture End Time: ${assigns[index]['lecture_end_time']}'),
-                              const SizedBox(height: 20),
-                              const Text('Laboratory Class:'),
-                              Text(
-                                  'Lecture Room: ${assignmentDetails?['room']}'),
-                              Text(
-                                  'Lab Start Time: ${assigns[index]['laboratory_start_time']}'),
-                              Text(
-                                  'Lab End Time: ${assigns[index]['laboratory_end_time']}'),
-                            ],
+                      return Column(
+                        children: [
+                          Card(
+                            elevation: 2,
+                            child: ListTile(
+                              title: Text('Assignment ${index + 1}'),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Priority Number: ${assigns[index]['priority_number']}',
+                                  ),
+                                  Text(
+                                    'Faculty: ${assignmentDetails?['faculty_firstname']}',
+                                  ),
+                                  Text(
+                                    'Course: ${assignmentDetails?['course']}',
+                                  ),
+                                  const SizedBox(height: 20),
+                                  const Text('Lecture Class:'),
+                                  Text(
+                                    'Lecture Days: ${assigns[index]['lecture_day']}',
+                                  ),
+                                  Text(
+                                    'Lecture Start Time: ${assigns[index]['lecture_start_time']}',
+                                  ),
+                                  Text(
+                                    'Lecture End Time: ${assigns[index]['lecture_end_time']}',
+                                  ),
+                                  Text(
+                                    'Lecture Room: ${assignmentDetails?['room']}',
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                          Card(
+                            elevation: 2,
+                            child: ListTile(
+                              title: const Text('Laboratory Class:'),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Priority Number: ${assigns[index]['priority_number']}',
+                                  ),
+                                  Text(
+                                    'Faculty: ${assignmentDetails?['faculty_firstname']}',
+                                  ),
+                                  Text(
+                                    'Course: ${assignmentDetails?['course']}',
+                                  ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    'Laboratory Days: ${assigns[index]['laboratory_day']}',
+                                  ),
+                                  Text(
+                                    'Lab Start Time: ${assigns[index]['laboratory_start_time']}',
+                                  ),
+                                  Text(
+                                    'Lab End Time: ${assigns[index]['laboratory_end_time']}',
+                                  ),
+                                  Text(
+                                    'Laboratory Room: ${assignmentDetails?['room']}',
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       );
                     }
                   },
@@ -443,9 +472,6 @@ class _AddAssignsState extends State<AddAssigns> {
         _selectedLabEndTime!,
         1,
       );
-      print('Assign added successfully!');
-    } else {
-      print('Please select all required fields.');
     }
     _loadData();
   }
