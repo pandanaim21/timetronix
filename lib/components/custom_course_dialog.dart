@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:timetronix/components/format_time.dart';
+
+String _formatTime(int hour, int minute) {
+  return formatTime(hour, minute);
+}
 
 void showCustomClassDialog(
   BuildContext context,
@@ -90,7 +95,17 @@ void showCustomClassDialog(
                         );
                         if (picked != null) {
                           onStartTimeSelected(picked.hour, picked.minute);
-                          setState(() {}); // State changed, trigger rebuild
+                          setState(() {
+                            (className == 'Lecture Class')
+                                ? selectedLectureStartTime = _formatTime(
+                                    picked.hour,
+                                    picked
+                                        .minute) // Use _formatTime function from format_time.dart
+                                : selectedLabStartTime = _formatTime(
+                                    picked.hour,
+                                    picked
+                                        .minute); // Use _formatTime function from format_time.dart
+                          });
                         }
                       },
                       child: SizedBox(
@@ -115,7 +130,17 @@ void showCustomClassDialog(
                         );
                         if (picked != null) {
                           onEndTimeSelected(picked.hour, picked.minute);
-                          setState(() {}); // State changed, trigger rebuild
+                          setState(() {
+                            (className == 'Lecture Class')
+                                ? selectedLectureEndTime = _formatTime(
+                                    picked.hour,
+                                    picked
+                                        .minute) // Use _formatTime function from format_time.dart
+                                : selectedLabEndTime = _formatTime(
+                                    picked.hour,
+                                    picked
+                                        .minute); // Use _formatTime function from format_time.dart
+                          });
                         }
                       },
                       child: SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:timetronix/components/custom_assign_dialog.dart';
 import 'package:timetronix/components/custom_course_dialog.dart';
+import 'package:timetronix/components/format_time.dart';
 import 'package:timetronix/db/db_helper.dart';
 
 class AddAssigns extends StatefulWidget {
@@ -109,6 +110,10 @@ class _AddAssignsState extends State<AddAssigns> {
     return result.first;
   }
 
+  String _formatTime(int hour, int minute) {
+    return formatTime(hour, minute);
+  }
+
   _showClassDialog(String className) {
     showCustomClassDialog(
       context,
@@ -161,12 +166,6 @@ class _AddAssignsState extends State<AddAssigns> {
         }
       },
     );
-  }
-
-  String _formatTime(int hour, int minute) {
-    final String period = hour < 12 ? 'AM' : 'PM';
-    final int hourOfDay = hour % 12 == 0 ? 12 : hour % 12;
-    return '$hourOfDay:${minute.toString().padLeft(2, '0')} $period';
   }
 
   @override
