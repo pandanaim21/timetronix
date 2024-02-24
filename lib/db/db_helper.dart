@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'timetronix.db'),
+      join(path, 'database.db'),
       onCreate: (database, version) async {
         // Create Classroom table
         await database.execute(
