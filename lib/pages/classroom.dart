@@ -60,7 +60,7 @@ class _AddClassroomState extends State<AddClassroom> {
                 itemBuilder: (BuildContext context, int index) {
                   return Card(
                     child: ListTile(
-                      title: Text('${classrooms[index]['room']}'),
+                      title: Text('Room ${classrooms[index]['room']}'),
                       subtitle: Text('${classrooms[index]['type']}'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,

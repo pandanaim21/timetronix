@@ -17,6 +17,8 @@ class _AddFacultyState extends State<AddFaculty> {
   final dbHelper = DatabaseHelper();
   List<Map<String, dynamic>> faculties = [];
   String defaultPosition = 'Faculty';
+  int defaultMinLoad = 0;
+  int defaultMaxLoad = 0;
   int defaultPriorityNumber = 5;
 
   @override
@@ -61,15 +63,17 @@ class _AddFacultyState extends State<AddFaculty> {
                   return Card(
                     child: ListTile(
                       title: Text(
-                        '${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
+                        'Faculty name: ${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('${faculties[index]['position']}'),
-                          // Text(
-                          //   'Priority Number: ${faculties[index]['priority_number']}',
-                          // ),
+                          Text('Position ${faculties[index]['position']}'),
+                          Text('Min Load: ${faculties[index]['min_load']}'),
+                          Text('Max Load: ${faculties[index]['max_load']}'),
+                          Text(
+                            'Priority Number: ${faculties[index]['priority_number']}',
+                          ),
                         ],
                       ),
                       trailing: Row(
@@ -122,11 +126,15 @@ class _AddFacultyState extends State<AddFaculty> {
       String firstName = row[0]?.value?.toString() ?? '';
       String lastName = row[1]?.value?.toString() ?? '';
       String position = row[2]?.value?.toString() ?? '';
-      int priorityNumber = int.tryParse(row[3]?.value?.toString() ?? '') ?? 1;
+      int minLoad = int.tryParse(row[3]?.value?.toString() ?? '') ?? 0;
+      int maxLoad = int.tryParse(row[4]?.value?.toString() ?? '') ?? 0;
+      int priorityNumber = int.tryParse(row[5]?.value?.toString() ?? '') ?? 0;
       await dbHelper.addFaculty(
         firstName,
         lastName,
         position,
+        minLoad,
+        maxLoad,
         priorityNumber,
       );
     }
@@ -138,8 +146,10 @@ class _AddFacultyState extends State<AddFaculty> {
       String firstName,
       String lastName,
       String selectedPosition,
+      int minimumLoad,
+      int maximumLoad,
       int selectedPriorityNumber,
-      Function(String, String, String, int) onSubmit) {
+      Function(String, String, String, int, int, int) onSubmit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -155,7 +165,15 @@ class _AddFacultyState extends State<AddFaculty> {
             'Chairperson',
           ],
           selectedPositionDropdownItem: selectedPosition,
-          priorityNumberDropdownItems: const [5, 4, 3, 2, 1],
+          minimumLoad: minimumLoad,
+          maximumLoad: maximumLoad,
+          priorityNumberDropdownItems: const [
+            5,
+            4,
+            3,
+            2,
+            1,
+          ],
           selectedPriorityNumberDropdownItem: selectedPriorityNumber,
           onSubmit: onSubmit,
         );
@@ -169,12 +187,17 @@ class _AddFacultyState extends State<AddFaculty> {
       '',
       '',
       defaultPosition,
+      defaultMinLoad,
+      defaultMaxLoad,
       defaultPriorityNumber,
-      (firstName, lastName, selectedPosition, selectedPriorityNumber) {
+      (firstName, lastName, selectedPosition, minLoad, maxLoad,
+          selectedPriorityNumber) {
         addFaculty(
           firstName,
           lastName,
           selectedPosition,
+          minLoad,
+          maxLoad,
           selectedPriorityNumber,
         );
       },
@@ -187,34 +210,66 @@ class _AddFacultyState extends State<AddFaculty> {
       faculty['firstname'],
       faculty['lastname'],
       faculty['position'],
+      faculty['min_load'],
+      faculty['max_load'],
       faculty['priority_number'],
-      (firstName, lastName, selectedPosition, selectedPriorityNumber) {
+      (firstName, lastName, selectedPosition, minLoad, maxLoad,
+          selectedPriorityNumber) {
         updateFaculty(
           faculty['id'],
           firstName,
           lastName,
           selectedPosition,
+          minLoad,
+          maxLoad,
           selectedPriorityNumber,
         );
       },
     );
   }
 
-  void addFaculty(String firstName, String lastName, String position,
-      int priorityNumber) async {
-    await dbHelper.addFaculty(firstName, lastName, position, priorityNumber);
+  void addFaculty(
+    String firstName,
+    String lastName,
+    String position,
+    int minLoad,
+    int maxLoad,
+    int priorityNumber,
+  ) async {
+    await dbHelper.addFaculty(
+      firstName,
+      lastName,
+      position,
+      minLoad,
+      maxLoad,
+      priorityNumber,
+    );
+    loadFaculties();
+  }
+
+  void updateFaculty(
+    int id,
+    String firstName,
+    String lastName,
+    String position,
+    int minLoad,
+    int maxLoad,
+    int priorityNumber,
+  ) async {
+    await dbHelper.editFaculty(
+      id,
+      firstName,
+      lastName,
+      position,
+      minLoad,
+      maxLoad,
+      priorityNumber,
+    );
     loadFaculties();
   }
 
   void removeFaculty(int id) async {
     await dbHelper.removeFaculty(id);
-    loadFaculties();
-  }
-
-  void updateFaculty(int id, String firstName, String lastName, String position,
-      int priorityNumber) async {
-    await dbHelper.editFaculty(
-        id, firstName, lastName, position, priorityNumber);
     loadFaculties();
   }
 

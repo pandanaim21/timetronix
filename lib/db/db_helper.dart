@@ -16,7 +16,7 @@ class DatabaseHelper {
 
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'database.db'),
+      join(path, 'timetronix.db'),
       onCreate: (database, version) async {
         // Create Classroom table
         await database.execute(
@@ -28,7 +28,7 @@ class DatabaseHelper {
         );
         // Create Faculty table
         await database.execute(
-          "CREATE TABLE Faculty(id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT, position TEXT, priority_number INTEGER)",
+          "CREATE TABLE Faculty(id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT, position TEXT, min_load INTEGER, max_load INTEGER, priority_number INTEGER)",
         );
         // Create Assign table with foreign key constraints
         await database.execute(
@@ -79,8 +79,15 @@ class DatabaseHelper {
   }
 
   //curriculum
-  Future<int> addCurriculum(String course, String description, String year,
-      String semester, int units, String meeting, String hasLab) async {
+  Future<int> addCurriculum(
+    String course,
+    String description,
+    String year,
+    String semester,
+    int units,
+    String meeting,
+    String hasLab,
+  ) async {
     final db = await database;
     return await db.insert(
       'Curriculum',
@@ -137,8 +144,14 @@ class DatabaseHelper {
   }
 
   //faculty
-  Future<int> addFaculty(String firstname, String lastname, String position,
-      int priorityNumber) async {
+  Future<int> addFaculty(
+    String firstname,
+    String lastname,
+    String position,
+    int minLoad,
+    int maxLoad,
+    int priorityNumber,
+  ) async {
     final db = await database;
     return await db.insert(
       'Faculty',
@@ -146,13 +159,22 @@ class DatabaseHelper {
         'firstname': firstname,
         'lastname': lastname,
         'position': position,
+        'min_load': minLoad,
+        'max_load': maxLoad,
         'priority_number': priorityNumber,
       },
     );
   }
 
-  Future<int> editFaculty(int id, String newFirstname, String newLastname,
-      String newPosition, int newPriorityNumber) async {
+  Future<int> editFaculty(
+    int id,
+    String newFirstname,
+    String newLastname,
+    String newPosition,
+    int newMinLoad,
+    int newMaxLoad,
+    int newPriorityNumber,
+  ) async {
     final db = await database;
     return await db.update(
       'Faculty',
@@ -160,6 +182,8 @@ class DatabaseHelper {
         'firstname': newFirstname,
         'lastname': newLastname,
         'position': newPosition,
+        'min_load': newMinLoad,
+        'max_load': newMaxLoad,
         'priority_number': newPriorityNumber,
       },
       where: "id = ?",

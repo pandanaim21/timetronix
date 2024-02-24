@@ -6,10 +6,12 @@ class CustomFacultyDialog extends StatefulWidget {
   final String firstName;
   final String lastName;
   final List<String> positionDropdownItems;
-  final List<int> priorityNumberDropdownItems;
   final String selectedPositionDropdownItem;
+  final int minimumLoad;
+  final int maximumLoad;
+  final List<int> priorityNumberDropdownItems;
   final int selectedPriorityNumberDropdownItem;
-  final Function(String, String, String, int) onSubmit;
+  final Function(String, String, String, int, int, int) onSubmit;
 
   const CustomFacultyDialog({
     Key? key,
@@ -17,8 +19,10 @@ class CustomFacultyDialog extends StatefulWidget {
     required this.firstName,
     required this.lastName,
     required this.positionDropdownItems,
-    required this.priorityNumberDropdownItems,
     required this.selectedPositionDropdownItem,
+    required this.minimumLoad,
+    required this.maximumLoad,
+    required this.priorityNumberDropdownItems,
     required this.selectedPriorityNumberDropdownItem,
     required this.onSubmit,
   }) : super(key: key);
@@ -32,10 +36,14 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
   late String _firstName;
   late String _lastName;
   late String _selectedPosition;
+  late int _minimumLoad;
+  late int _maximumLoad;
   late int _selectedPriorityNumber;
 
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
+  late TextEditingController _minimumLoadController;
+  late TextEditingController _maximumLoadController;
 
   @override
   void initState() {
@@ -43,10 +51,38 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
     _firstName = widget.firstName;
     _lastName = widget.lastName;
     _selectedPosition = widget.selectedPositionDropdownItem;
+    _minimumLoad = widget.minimumLoad;
+    _maximumLoad = widget.maximumLoad;
     _selectedPriorityNumber = widget.selectedPriorityNumberDropdownItem;
 
     _firstNameController = TextEditingController(text: _firstName);
     _lastNameController = TextEditingController(text: _lastName);
+    _minimumLoadController =
+        TextEditingController(text: _minimumLoad.toString());
+    _maximumLoadController =
+        TextEditingController(text: _maximumLoad.toString());
+
+    _updatePriorityNumber();
+  }
+
+  void _updatePriorityNumber() {
+    switch (_selectedPosition) {
+      case 'Dean':
+        _selectedPriorityNumber = 1;
+        break;
+      case 'Assistant Dean':
+        _selectedPriorityNumber = 2;
+        break;
+      case 'Secretary':
+        _selectedPriorityNumber = 3;
+        break;
+      case 'Chairperson':
+        _selectedPriorityNumber = 4;
+        break;
+      case 'Faculty':
+        _selectedPriorityNumber = 5;
+        break;
+    }
   }
 
   @override
@@ -84,6 +120,34 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
               },
             ),
             const SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Min Units',
+              controller: _minimumLoadController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
+              onChanged: (value) {
+                setState(() {
+                  _minimumLoad = int.tryParse(value) ?? 0;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+            CustomTextField(
+              borderColor: Colors.blue,
+              hintText: 'Max Units',
+              controller: _maximumLoadController,
+              textAlign: TextAlign.left,
+              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+              leftPadding: const EdgeInsets.only(left: 8.0),
+              onChanged: (value) {
+                setState(() {
+                  _maximumLoad = int.tryParse(value) ?? 0;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -97,6 +161,7 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
                     onChanged: (String? newValue) {
                       setState(() {
                         _selectedPosition = newValue!;
+                        _updatePriorityNumber();
                       });
                     },
                     borderRadius: BorderRadius.circular(12.0),
@@ -161,6 +226,8 @@ class _CustomFacultyDialogState extends State<CustomFacultyDialog> {
               _firstName,
               _lastName,
               _selectedPosition,
+              _minimumLoad,
+              _maximumLoad,
               _selectedPriorityNumber,
             );
             Navigator.of(context).pop();

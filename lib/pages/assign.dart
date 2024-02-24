@@ -196,8 +196,7 @@ class _AddAssignsState extends State<AddAssigns> {
                           Card(
                             elevation: 2,
                             child: ListTile(
-                              title: Text('Assignment ${index + 1}'),
-                              subtitle: Column(
+                              title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(

@@ -62,27 +62,29 @@ void showCustomClassDialog(
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: days
-                      .map(
-                        (day) => IconButton(
-                          onPressed: () {
-                            onDayPressed(day);
-                            setState(() {}); // State changed, trigger rebuild
-                          },
-                          icon: Text(
-                            day,
-                            style: TextStyle(
-                              color: (className == 'Lecture Class'
-                                          ? selectedLectureDays
-                                          : selectedLabDays)
-                                      .contains(day)
-                                  ? Colors.red[900]
-                                  : Colors.black,
-                            ),
+                  children: days.map((day) {
+                    bool isSelected = (className == 'Lecture Class'
+                            ? selectedLectureDays
+                            : selectedLabDays)
+                        .contains(day);
+                    return IconButton(
+                      onPressed: () {
+                        onDayPressed(day);
+                        setState(() {}); // State changed, trigger rebuild
+                      },
+                      icon: CircleAvatar(
+                        backgroundColor:
+                            isSelected ? Colors.blue[800] : Colors.grey[400],
+                        child: Text(
+                          day,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.white,
+                            fontSize: 12,
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 25),
                 Row(
