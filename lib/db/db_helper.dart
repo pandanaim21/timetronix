@@ -32,7 +32,7 @@ class DatabaseHelper {
         );
         // Create Assign table with foreign key constraints
         await database.execute(
-          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, lecture_day TEXT, lecture_start_time TEXT, lecture_end_time TEXT, laboratory_day TEXT, laboratory_start_time TEXT, laboratory_end_time TEXT, priority_number INTEGER, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
+          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, lecture_day TEXT, lecture_start_time TEXT, lecture_end_time TEXT, laboratory_day TEXT, laboratory_start_time TEXT, laboratory_end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
         );
       },
       version: 1,
@@ -229,8 +229,7 @@ class DatabaseHelper {
       String lectureEndTime,
       String laboratoryDay,
       String laboratoryStartTime,
-      String laboratoryEndTime,
-      int priorityNumber) async {
+      String laboratoryEndTime) async {
     final db = await database;
     return await db.insert(
       'Assign',
@@ -244,7 +243,6 @@ class DatabaseHelper {
         'laboratory_day': laboratoryDay,
         'laboratory_start_time': laboratoryStartTime,
         'laboratory_end_time': laboratoryEndTime,
-        'priority_number': priorityNumber
       },
     );
   }
@@ -259,8 +257,7 @@ class DatabaseHelper {
       String newLectureEndTime,
       String newLaboratoryDay,
       String newLaboratoryStartTime,
-      String newLaboratoryEndTime,
-      int newPriorityNumber) async {
+      String newLaboratoryEndTime) async {
     final db = await database;
     return await db.update(
       'Assign',
@@ -274,7 +271,6 @@ class DatabaseHelper {
         'laboratory_day': newLaboratoryDay,
         'laboratory_start_time': newLaboratoryStartTime,
         'laboratory_end_time': newLaboratoryEndTime,
-        'priority_number': newPriorityNumber
       },
       where: "id = ?",
       whereArgs: [id],
@@ -329,12 +325,40 @@ class DatabaseHelper {
   //   return result.isNotEmpty ? result.first : {};
   // }
 
-  // Get assignment details by ID
-  Future<Map<String, dynamic>> getAssignmentDetails(
+  // // Get assignment details by ID
+  // Future<Map<String, dynamic>> getAssignmentDetails(
+  //     Map<String, dynamic> assign) async {
+  //   final db = await initializeDatabase();
+  //   final result = await db.rawQuery('''
+  //   SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+  //   FROM Assign
+  //   INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+  //   INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
+  //   INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
+  //   WHERE Assign.id = ?
+  // ''', [assign['id']]);
+  //   return result.first;
+  // }
+
+  Future<Map<String, dynamic>> getAssignment(
       Map<String, dynamic> assign) async {
     final db = await initializeDatabase();
     final result = await db.rawQuery('''
-    SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+    SELECT 
+      Faculty.firstname AS faculty_firstname, 
+      Faculty.lastname AS faculty_lastname,
+      Faculty.min_load,
+      Faculty.max_load,
+      Faculty.priority_number,
+      Curriculum.course, 
+      Curriculum.description, 
+      Curriculum.year, 
+      Curriculum.semester, 
+      Curriculum.units, 
+      Curriculum.meeting, 
+      Curriculum.hasLab, 
+      Classroom.room, 
+      Classroom.type
     FROM Assign
     INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
     INNER JOIN Curriculum ON Assign.course_id = Curriculum.id

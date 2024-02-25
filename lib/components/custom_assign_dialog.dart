@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 showCustomAssignDialog(
-    BuildContext context,
-    List<DropdownMenuItem<String>> facultyDropdownItems,
-    List<DropdownMenuItem<String>> courseDropdownItems,
-    Function(String?) onFacultySelected,
-    Function(String?) onCourseSelected,
-    Function() onLectureClassSelected,
-    Function() onLaboratoryClassSelected,
-    Function() onSubmit) {
+  BuildContext context,
+  List<DropdownMenuItem<String>> facultyDropdownItems,
+  List<Map<String, dynamic>> courseDropdownItems,
+  Function(String?) onFacultySelected,
+  Function(String?) onCourseSelected,
+  Function() onLectureClassSelected,
+  Function() onLaboratoryClassSelected,
+  Function() onSubmit,
+) {
   String? selectedFaculty;
-  String? selectedCourse;
+  Map<String, dynamic>? selectedCourse;
 
   showDialog(
     context: context,
@@ -35,14 +36,19 @@ showCustomAssignDialog(
                   hint: const Text('Select Faculty'),
                 ),
                 const SizedBox(height: 10),
-                DropdownButton<String>(
+                DropdownButton<Map<String, dynamic>>(
                   isExpanded: true,
-                  items: courseDropdownItems,
-                  onChanged: (String? value) {
+                  items: courseDropdownItems.map((course) {
+                    return DropdownMenuItem<Map<String, dynamic>>(
+                      value: course,
+                      child: Text(course['course']),
+                    );
+                  }).toList(),
+                  onChanged: (Map<String, dynamic>? value) {
                     setState(() {
                       selectedCourse = value;
                     });
-                    onCourseSelected(value);
+                    onCourseSelected(value?['id'].toString());
                   },
                   value: selectedCourse,
                   hint: const Text('Select Course'),
@@ -59,9 +65,10 @@ showCustomAssignDialog(
                     ),
                     const SizedBox(width: 15),
                     ElevatedButton(
-                      onPressed: () {
-                        onLaboratoryClassSelected();
-                      },
+                      onPressed: selectedCourse != null &&
+                              selectedCourse!['hasLab'] == 'YES'
+                          ? onLaboratoryClassSelected
+                          : null,
                       child: const Text('Laboratory Class'),
                     ),
                   ],

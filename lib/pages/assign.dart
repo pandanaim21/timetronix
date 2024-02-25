@@ -29,7 +29,8 @@ class _AddAssignsState extends State<AddAssigns> {
   final Set<String> _selectedLabDays = {};
 
   List<DropdownMenuItem<String>> _facultyDropdownItems = [];
-  List<DropdownMenuItem<String>> _courseDropdownItems = [];
+  List<Map<String, dynamic>> _courseDropdownItems = [];
+
   List<DropdownMenuItem<String>> _lectureRoomDropdownItems = [];
   List<DropdownMenuItem<String>> _laboratoryRoomDropdownItems = [];
   List<Map<String, dynamic>> assigns = [];
@@ -66,11 +67,12 @@ class _AddAssignsState extends State<AddAssigns> {
           );
         }).toList();
 
-        _courseDropdownItems = courses.map<DropdownMenuItem<String>>((course) {
-          return DropdownMenuItem<String>(
-            value: course['id'].toString(),
-            child: Text(course['course']),
-          );
+        _courseDropdownItems = courses.map<Map<String, dynamic>>((course) {
+          return {
+            'id': course['id'].toString(),
+            'course': course['course'],
+            'hasLab': course['hasLab'],
+          };
         }).toList();
 
         _lectureRoomDropdownItems = classrooms
@@ -100,7 +102,21 @@ class _AddAssignsState extends State<AddAssigns> {
       Map<String, dynamic> assign) async {
     final db = await dbHelper.initializeDatabase();
     final result = await db.rawQuery('''
-    SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+    SELECT 
+      Faculty.firstname AS faculty_firstname, 
+      Faculty.lastname AS faculty_lastname,
+      Faculty.min_load,
+      Faculty.max_load,
+      Faculty.priority_number,
+      Curriculum.course, 
+      Curriculum.description, 
+      Curriculum.year, 
+      Curriculum.semester, 
+      Curriculum.units, 
+      Curriculum.meeting, 
+      Curriculum.hasLab, 
+      Classroom.room, 
+      Classroom.type
     FROM Assign
     INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
     INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
@@ -109,6 +125,20 @@ class _AddAssignsState extends State<AddAssigns> {
   ''', [assign['id']]);
     return result.first;
   }
+
+  // Future<Map<String, dynamic>> getAssignmentDetails(
+  //     Map<String, dynamic> assign) async {
+  //   final db = await dbHelper.initializeDatabase();
+  //   final result = await db.rawQuery('''
+  //   SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+  //   FROM Assign
+  //   INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+  //   INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
+  //   INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
+  //   WHERE Assign.id = ?
+  // ''', [assign['id']]);
+  //   return result.first;
+  // }
 
   String _formatTime(int hour, int minute) {
     return formatTime(hour, minute);
@@ -200,13 +230,29 @@ class _AddAssignsState extends State<AddAssigns> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Priority Number: ${assigns[index]['priority_number']}',
+                                    'Faculty: ${assignmentDetails?['faculty_firstname']}, ${assignmentDetails?['faculty_lastname']}',
                                   ),
                                   Text(
-                                    'Faculty: ${assignmentDetails?['faculty_firstname']}',
+                                    'Min Load: ${assignmentDetails?['min_load']}',
                                   ),
+                                  Text(
+                                    'Max Load: ${assignmentDetails?['max_load']}',
+                                  ),
+                                  Text(
+                                    'Priority Number: ${assignmentDetails?['priority_number']}',
+                                  ),
+                                  const SizedBox(height: 10),
                                   Text(
                                     'Course: ${assignmentDetails?['course']}',
+                                  ),
+                                  Text(
+                                    'Description: ${assignmentDetails?['description']}',
+                                  ),
+                                  Text(
+                                    'Units: ${assignmentDetails?['units']}',
+                                  ),
+                                  Text(
+                                    'Has Laboratory? ${assignmentDetails?['hasLab']}',
                                   ),
                                   const SizedBox(height: 10),
                                   const Text('Lecture Class:'),
@@ -222,20 +268,27 @@ class _AddAssignsState extends State<AddAssigns> {
                                   Text(
                                     'Lecture Room: ${assignmentDetails?['room']}',
                                   ),
-                                  const SizedBox(height: 10),
-                                  const Text('Laboratory Class:'),
-                                  Text(
-                                    'Laboratory Days: ${assigns[index]['laboratory_day']}',
-                                  ),
-                                  Text(
-                                    'Lab Start Time: ${assigns[index]['laboratory_start_time']}',
-                                  ),
-                                  Text(
-                                    'Lab End Time: ${assigns[index]['laboratory_end_time']}',
-                                  ),
-                                  Text(
-                                    'Laboratory Room: ${assignmentDetails?['room']}',
-                                  ),
+                                  if (assignmentDetails?['hasLab'] == 'YES')
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 10),
+                                        const Text('Laboratory Class:'),
+                                        Text(
+                                          'Laboratory Days: ${assigns[index]['laboratory_day']}',
+                                        ),
+                                        Text(
+                                          'Lab Start Time: ${assigns[index]['laboratory_start_time']}',
+                                        ),
+                                        Text(
+                                          'Lab End Time: ${assigns[index]['laboratory_end_time']}',
+                                        ),
+                                        Text(
+                                          'Laboratory Room: ${assignmentDetails?['room']}',
+                                        ),
+                                      ],
+                                    ),
                                 ],
                               ),
                               trailing: IconButton(
@@ -284,29 +337,22 @@ class _AddAssignsState extends State<AddAssigns> {
   }
 
   void addAssign() async {
-    if (_selectedFaculty != null &&
-        _selectedCourse != null &&
-        _selectedLectureRoom != null &&
-        _selectedLaboratoryRoom != null &&
-        _selectedLectureDays.isNotEmpty &&
-        _selectedLabDays.isNotEmpty &&
-        _selectedLectureStartTime != null &&
-        _selectedLectureEndTime != null &&
-        _selectedLabStartTime != null &&
-        _selectedLabEndTime != null) {
-      await dbHelper.addAssign(
-        int.parse(_selectedFaculty!),
-        int.parse(_selectedCourse!),
-        int.parse(_selectedLectureRoom!),
-        _selectedLectureDays.join(', '),
-        _selectedLectureStartTime!,
-        _selectedLectureEndTime!,
-        _selectedLabDays.join(', '),
-        _selectedLabStartTime!,
-        _selectedLabEndTime!,
-        1,
-      );
-    }
+    String labStartTime = _selectedLabStartTime ?? 'N/A';
+    String labEndTime = _selectedLabEndTime ?? 'N/A';
+    String labDays =
+        _selectedLabDays.isNotEmpty ? _selectedLabDays.join(', ') : 'N/A';
+
+    await dbHelper.addAssign(
+      int.parse(_selectedFaculty!),
+      int.parse(_selectedCourse!),
+      int.parse(_selectedLectureRoom!),
+      _selectedLectureDays.join(', '),
+      _selectedLectureStartTime!,
+      _selectedLectureEndTime!,
+      labDays,
+      labStartTime,
+      labEndTime,
+    );
     _loadData();
   }
 
