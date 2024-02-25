@@ -41,7 +41,6 @@ class _AddFacultyState extends State<AddFaculty> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
                     onPressed: _showAddFacultyDialog,
@@ -57,46 +56,58 @@ class _AddFacultyState extends State<AddFaculty> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: faculties.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(
-                        'Faculty name: ${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
+              child: faculties.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Add Faculty',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Position ${faculties[index]['position']}'),
-                          Text('Min Load: ${faculties[index]['min_load']}'),
-                          Text('Max Load: ${faculties[index]['max_load']}'),
-                          Text(
-                            'Priority Number: ${faculties[index]['priority_number']}',
+                    )
+                  : ListView.builder(
+                      itemCount: faculties.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text(
+                              'Faculty name: ${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    'Position ${faculties[index]['position']}'),
+                                Text(
+                                    'Min Load: ${faculties[index]['min_load']}'),
+                                Text(
+                                    'Max Load: ${faculties[index]['max_load']}'),
+                                Text(
+                                  'Priority Number: ${faculties[index]['priority_number']}',
+                                ),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _showEditFacultyDialog(faculties[index]);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    removeFaculty(faculties[index]['id']);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              _showEditFacultyDialog(faculties[index]);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              removeFaculty(faculties[index]['id']);
-                            },
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),

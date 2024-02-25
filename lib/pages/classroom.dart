@@ -16,7 +16,11 @@ class AddClassroom extends StatefulWidget {
 // Wasim A. Macasayan
 class _AddClassroomState extends State<AddClassroom> {
   final dbHelper = DatabaseHelper();
-  List<Map<String, dynamic>> classrooms = [];
+  //Select All
+  List<Map<String, dynamic>> getClassroom = [];
+  //Specific Room Type
+  List<Map<String, dynamic>> getLectureRoom = [];
+  List<Map<String, dynamic>> getlaboratoryRoom = [];
   String defaultSelectedType = 'Lecture Class';
 
   @override
@@ -39,7 +43,6 @@ class _AddClassroomState extends State<AddClassroom> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
                     onPressed: _showAddDialog,
@@ -55,33 +58,124 @@ class _AddClassroomState extends State<AddClassroom> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: classrooms.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text('Room ${classrooms[index]['room']}'),
-                      subtitle: Text('${classrooms[index]['type']}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              _showEditDialog(classrooms[index]);
-                            },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            'Lecture Class',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              removeClassroom(classrooms[index]['room']);
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                        getLectureRoom.isEmpty
+                            ? const Expanded(
+                                child: Center(
+                                  child: Text('Add Room'),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
+                                  itemCount: getLectureRoom.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Card(
+                                      child: ListTile(
+                                        title: Text(
+                                            'Room ${getLectureRoom[index]['room']}'),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.edit),
+                                              onPressed: () {
+                                                _showEditDialog(
+                                                    getLectureRoom[index]);
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                removeClassroom(
+                                                    getLectureRoom[index]
+                                                        ['room']);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                      ],
                     ),
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Text(
+                            'Laboratory Class',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        getlaboratoryRoom.isEmpty
+                            ? const Expanded(
+                                child: Center(
+                                  child: Text('Add Room'),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
+                                  itemCount: getlaboratoryRoom.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Card(
+                                      child: ListTile(
+                                        title: Text(
+                                            'Room ${getlaboratoryRoom[index]['room']}'),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.edit),
+                                              onPressed: () {
+                                                _showEditDialog(
+                                                    getlaboratoryRoom[index]);
+                                              },
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () {
+                                                removeClassroom(
+                                                    getlaboratoryRoom[index]
+                                                        ['room']);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -188,11 +282,14 @@ class _AddClassroomState extends State<AddClassroom> {
   }
 
   void loadClassrooms() async {
-    List<Map<String, dynamic>> classroomData = await dbHelper.getClassrooms();
-    setState(
-      () {
-        classrooms = classroomData;
-      },
-    );
+    List<Map<String, dynamic>> classrooms = await dbHelper.getClassrooms();
+    List<Map<String, dynamic>> lectureRooms = await dbHelper.getLectureRooms();
+    List<Map<String, dynamic>> laboratoryRooms =
+        await dbHelper.getLaboratoryRooms();
+    setState(() {
+      getClassroom = classrooms;
+      getLectureRoom = lectureRooms;
+      getlaboratoryRoom = laboratoryRooms;
+    });
   }
 }

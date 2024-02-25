@@ -78,6 +78,20 @@ class DatabaseHelper {
     return await db.query('Classroom');
   }
 
+  // Function to get lecture rooms
+  Future<List<Map<String, dynamic>>> getLectureRooms() async {
+    final db = await database;
+    return await db
+        .query('Classroom', where: 'type = ?', whereArgs: ['Lecture Class']);
+  }
+
+  // Function to get laboratory rooms
+  Future<List<Map<String, dynamic>>> getLaboratoryRooms() async {
+    final db = await database;
+    return await db
+        .query('Classroom', where: 'type = ?', whereArgs: ['Laboratory Class']);
+  }
+
   //curriculum
   Future<int> addCurriculum(
     String course,
@@ -281,39 +295,39 @@ class DatabaseHelper {
     return await db.query('Assign');
   }
 
-  //Getters
-  // Get room details by ID
-  Future<Map<String, dynamic>> getRoomDetails(String? roomId) async {
-    final db = await database;
-    List<Map<String, dynamic>> result = await db.query(
-      'Classroom',
-      where: 'id = ?',
-      whereArgs: [roomId],
-    );
-    return result.isNotEmpty ? result.first : {};
-  }
+  // //Getters
+  // // Get room details by ID
+  // Future<Map<String, dynamic>> getRoomDetails(String? roomId) async {
+  //   final db = await database;
+  //   List<Map<String, dynamic>> result = await db.query(
+  //     'Classroom',
+  //     where: 'id = ?',
+  //     whereArgs: [roomId],
+  //   );
+  //   return result.isNotEmpty ? result.first : {};
+  // }
 
-  // Get course details by ID
-  Future<Map<String, dynamic>> getCourseDetails(String? courseId) async {
-    final db = await database;
-    List<Map<String, dynamic>> result = await db.query(
-      'Curriculum',
-      where: 'id = ?',
-      whereArgs: [courseId],
-    );
-    return result.isNotEmpty ? result.first : {};
-  }
+  // // Get course details by ID
+  // Future<Map<String, dynamic>> getCourseDetails(String? courseId) async {
+  //   final db = await database;
+  //   List<Map<String, dynamic>> result = await db.query(
+  //     'Curriculum',
+  //     where: 'id = ?',
+  //     whereArgs: [courseId],
+  //   );
+  //   return result.isNotEmpty ? result.first : {};
+  // }
 
-  // Get faculty details by ID
-  Future<Map<String, dynamic>> getFacultyDetails(String? facultyId) async {
-    final db = await database;
-    List<Map<String, dynamic>> result = await db.query(
-      'Faculty',
-      where: 'id = ?',
-      whereArgs: [facultyId],
-    );
-    return result.isNotEmpty ? result.first : {};
-  }
+  // // Get faculty details by ID
+  // Future<Map<String, dynamic>> getFacultyDetails(String? facultyId) async {
+  //   final db = await database;
+  //   List<Map<String, dynamic>> result = await db.query(
+  //     'Faculty',
+  //     where: 'id = ?',
+  //     whereArgs: [facultyId],
+  //   );
+  //   return result.isNotEmpty ? result.first : {};
+  // }
 
   // Get assignment details by ID
   Future<Map<String, dynamic>> getAssignmentDetails(

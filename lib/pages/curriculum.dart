@@ -15,7 +15,9 @@ class AddCurriculum extends StatefulWidget {
 
 class _AddCurriculumState extends State<AddCurriculum> {
   final dbHelper = DatabaseHelper();
-  List<Map<String, dynamic>> curriculums = [];
+  List<Map<String, dynamic>> getCurriculum = [];
+  List<Map<String, dynamic>> getFirstSemester = [];
+  List<Map<String, dynamic>> getSecondSemester = [];
   String defaultSelectedYear = '1st';
   String defaultSelectedSemester = '1st semester';
   String defaultSelectedHasLab = 'NO';
@@ -40,7 +42,6 @@ class _AddCurriculumState extends State<AddCurriculum> {
               padding: const EdgeInsets.all(15.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ElevatedButton(
                     onPressed: _showAddCurriculumDialog,
@@ -56,49 +57,62 @@ class _AddCurriculumState extends State<AddCurriculum> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: curriculums.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    child: ListTile(
-                      title:
-                          Text('Course Code: ${curriculums[index]['course']}'),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Course Description: ${curriculums[index]['description']}',
-                          ),
-                          Text('Year: ${curriculums[index]['year']}'),
-                          Text('Semester: ${curriculums[index]['semester']}'),
-                          Text('Units: ${curriculums[index]['units']}'),
-                          Text('Frequency: ${curriculums[index]['meeting']}'),
-                          Text(
-                            'Laboratory Class: ${curriculums[index]['hasLab']}',
-                          )
-                        ],
+              child: getCurriculum.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'Add Course',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                        ),
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              _showEditCurriculumDialog(curriculums[index]);
-                            },
+                    )
+                  : ListView.builder(
+                      itemCount: getCurriculum.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Card(
+                          child: ListTile(
+                            title: Text(
+                                'Course Code: ${getCurriculum[index]['course']}'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Course Description: ${getCurriculum[index]['description']}',
+                                ),
+                                Text('Year: ${getCurriculum[index]['year']}'),
+                                Text(
+                                    'Semester: ${getCurriculum[index]['semester']}'),
+                                Text('Units: ${getCurriculum[index]['units']}'),
+                                Text(
+                                    'Frequency: ${getCurriculum[index]['meeting']}'),
+                                Text(
+                                  'Laboratory Class: ${getCurriculum[index]['hasLab']}',
+                                )
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _showEditCurriculumDialog(
+                                        getCurriculum[index]);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    removeCurriculum(
+                                        getCurriculum[index]['id']);
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              removeCurriculum(curriculums[index]['id']);
-                            },
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
@@ -132,8 +146,6 @@ class _AddCurriculumState extends State<AddCurriculum> {
           semesterDropdownItems: const [
             '1st semester',
             '2nd semester',
-            '3rd semester',
-            '4th semester',
             'Summer',
           ],
           hasLabDropdownItems: const [
@@ -261,10 +273,10 @@ class _AddCurriculumState extends State<AddCurriculum> {
   }
 
   void loadCurriculums() async {
-    List<Map<String, dynamic>> curriculumData = await dbHelper.getCurriculum();
+    List<Map<String, dynamic>> curriculums = await dbHelper.getCurriculum();
     setState(
       () {
-        curriculums = curriculumData;
+        getCurriculum = curriculums;
       },
     );
   }
