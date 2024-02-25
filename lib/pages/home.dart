@@ -26,7 +26,7 @@ class Home extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(color: Colors.blue[800]),
-              child: const Text('Sidebar'),
+              child: const Text('LOGO'),
             ),
             ListTile(
               leading: const Icon(Icons.add_box),
@@ -76,49 +76,62 @@ class Home extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildStatisticBox(
-                    context,
-                    'Classrooms',
-                    DatabaseHelper()
-                        .getClassrooms()
-                        .then((value) => value.length.toString()),
+                  Expanded(
+                    child: _buildStatisticBox(
+                      context,
+                      'Classrooms',
+                      DatabaseHelper()
+                          .getClassrooms()
+                          .then((value) => value.length.toString()),
+                    ),
                   ),
                   const SizedBox(width: 20.0),
-                  _buildStatisticBox(
-                    context,
-                    'Courses',
-                    DatabaseHelper()
-                        .getCurriculum()
-                        .then((value) => value.length.toString()),
+                  Expanded(
+                    child: _buildStatisticBox(
+                      context,
+                      'Courses',
+                      DatabaseHelper()
+                          .getCurriculum()
+                          .then((value) => value.length.toString()),
+                    ),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Expanded(
+                    child: _buildStatisticBox(
+                      context,
+                      'Faculties',
+                      DatabaseHelper()
+                          .getFaculty()
+                          .then((value) => value.length.toString()),
+                    ),
+                  ),
+                  const SizedBox(width: 20.0),
+                  Expanded(
+                    child: _buildStatisticBox(
+                      context,
+                      'Assigns',
+                      DatabaseHelper()
+                          .getAssign()
+                          .then((value) => value.length.toString()),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildStatisticBox(
-                    context,
-                    'Faculties',
-                    DatabaseHelper()
-                        .getFaculty()
-                        .then((value) => value.length.toString()),
-                  ),
-                  const SizedBox(width: 20.0),
-                  _buildStatisticBox(
-                    context,
-                    'Assigns',
-                    DatabaseHelper()
-                        .getAssign()
-                        .then((value) => value.length.toString()),
-                  ),
-                ],
+              const SizedBox(height: 20.0),
+              Expanded(
+                child: _buildStatisticBox(
+                  context,
+                  'Schedules',
+                  DatabaseHelper()
+                      .getAssign()
+                      .then((value) => value.length.toString()),
+                ),
               ),
             ],
           ),
@@ -141,11 +154,10 @@ class Home extends StatelessWidget {
           );
         } else {
           return Container(
-            width: MediaQuery.of(context).size.width * 0.3,
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: 200,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Colors.blue[400],
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(

@@ -224,6 +224,7 @@ class _AddAssignsState extends State<AddAssigns> {
                       return Column(
                         children: [
                           Card(
+                            color: Colors.blue[200],
                             elevation: 2,
                             child: ListTile(
                               title: Column(

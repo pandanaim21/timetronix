@@ -70,6 +70,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
                       itemCount: getCurriculum.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
+                          color: Colors.blue[200],
                           child: ListTile(
                             title: Text(
                                 'Course Code: ${getCurriculum[index]['course']}'),

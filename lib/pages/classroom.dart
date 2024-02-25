@@ -87,6 +87,7 @@ class _AddClassroomState extends State<AddClassroom> {
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Card(
+                                      color: Colors.blue[200],
                                       child: ListTile(
                                         title: Text(
                                             'Room ${getLectureRoom[index]['room']}'),
@@ -144,6 +145,7 @@ class _AddClassroomState extends State<AddClassroom> {
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Card(
+                                      color: Colors.blue[200],
                                       child: ListTile(
                                         title: Text(
                                             'Room ${getlaboratoryRoom[index]['room']}'),

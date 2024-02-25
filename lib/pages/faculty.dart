@@ -69,6 +69,7 @@ class _AddFacultyState extends State<AddFaculty> {
                       itemCount: faculties.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
+                          color: Colors.blue[200],
                           child: ListTile(
                             title: Text(
                               'Faculty name: ${faculties[index]['lastname']}, ${faculties[index]['firstname']}',
