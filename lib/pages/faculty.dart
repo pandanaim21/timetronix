@@ -293,10 +293,15 @@ class _AddFacultyState extends State<AddFaculty> {
 
   void loadFaculties() async {
     List<Map<String, dynamic>> facultyData = await dbHelper.getFaculty();
-    setState(
-      () {
-        faculties = facultyData;
-      },
+    // Sorting faculties by priority number
+    List<Map<String, dynamic>> sortedFaculties = List.from(facultyData);
+    sortedFaculties.sort(
+      (a, b) => a['priority_number'].compareTo(
+        b['priority_number'],
+      ),
     );
+    setState(() {
+      faculties = sortedFaculties;
+    });
   }
 }

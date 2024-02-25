@@ -65,17 +65,17 @@ class _AddClassroomState extends State<AddClassroom> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15.0),
-                          child: Text(
-                            'Lecture Class',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        getLectureRoom.isEmpty
+                        // const Padding(
+                        //   padding: EdgeInsets.only(left: 15.0),
+                        //   child: Text(
+                        //     'Classrooms',
+                        //     style: TextStyle(
+                        //       fontSize: 20,
+                        //       fontWeight: FontWeight.bold,
+                        //     ),
+                        //   ),
+                        // ),
+                        getClassroom.isEmpty
                             ? const Expanded(
                                 child: Center(
                                   child: Text('Add Room'),
@@ -83,14 +83,24 @@ class _AddClassroomState extends State<AddClassroom> {
                               )
                             : Expanded(
                                 child: ListView.builder(
-                                  itemCount: getLectureRoom.length,
+                                  itemCount: getClassroom.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Card(
                                       color: Colors.blue[200],
                                       child: ListTile(
-                                        title: Text(
-                                            'Room ${getLectureRoom[index]['room']}'),
+                                        title: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Room ${getClassroom[index]['room']}',
+                                            ),
+                                            Text(
+                                              '${getClassroom[index]['type']}',
+                                            ),
+                                          ],
+                                        ),
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -98,14 +108,14 @@ class _AddClassroomState extends State<AddClassroom> {
                                               icon: const Icon(Icons.edit),
                                               onPressed: () {
                                                 _showEditDialog(
-                                                    getLectureRoom[index]);
+                                                    getClassroom[index]);
                                               },
                                             ),
                                             IconButton(
                                               icon: const Icon(Icons.delete),
                                               onPressed: () {
                                                 removeClassroom(
-                                                    getLectureRoom[index]
+                                                    getClassroom[index]
                                                         ['room']);
                                               },
                                             ),
@@ -119,64 +129,64 @@ class _AddClassroomState extends State<AddClassroom> {
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 15.0),
-                          child: Text(
-                            'Laboratory Class',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        getlaboratoryRoom.isEmpty
-                            ? const Expanded(
-                                child: Center(
-                                  child: Text('Add Room'),
-                                ),
-                              )
-                            : Expanded(
-                                child: ListView.builder(
-                                  itemCount: getlaboratoryRoom.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Card(
-                                      color: Colors.blue[200],
-                                      child: ListTile(
-                                        title: Text(
-                                            'Room ${getlaboratoryRoom[index]['room']}'),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.edit),
-                                              onPressed: () {
-                                                _showEditDialog(
-                                                    getlaboratoryRoom[index]);
-                                              },
-                                            ),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete),
-                                              onPressed: () {
-                                                removeClassroom(
-                                                    getlaboratoryRoom[index]
-                                                        ['room']);
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                      ],
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       const Padding(
+                  //         padding: EdgeInsets.only(left: 15.0),
+                  //         child: Text(
+                  //           'Laboratory Class',
+                  //           style: TextStyle(
+                  //             fontSize: 20,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //       getlaboratoryRoom.isEmpty
+                  //           ? const Expanded(
+                  //               child: Center(
+                  //                 child: Text('Add Room'),
+                  //               ),
+                  //             )
+                  //           : Expanded(
+                  //               child: ListView.builder(
+                  //                 itemCount: getlaboratoryRoom.length,
+                  //                 itemBuilder:
+                  //                     (BuildContext context, int index) {
+                  //                   return Card(
+                  //                     color: Colors.blue[200],
+                  //                     child: ListTile(
+                  //                       title: Text(
+                  //                           'Room ${getlaboratoryRoom[index]['room']}'),
+                  //                       trailing: Row(
+                  //                         mainAxisSize: MainAxisSize.min,
+                  //                         children: [
+                  //                           IconButton(
+                  //                             icon: const Icon(Icons.edit),
+                  //                             onPressed: () {
+                  //                               _showEditDialog(
+                  //                                   getlaboratoryRoom[index]);
+                  //                             },
+                  //                           ),
+                  //                           IconButton(
+                  //                             icon: const Icon(Icons.delete),
+                  //                             onPressed: () {
+                  //                               removeClassroom(
+                  //                                   getlaboratoryRoom[index]
+                  //                                       ['room']);
+                  //                             },
+                  //                           ),
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   );
+                  //                 },
+                  //               ),
+                  //             ),
+                  //     ],
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -288,10 +298,33 @@ class _AddClassroomState extends State<AddClassroom> {
     List<Map<String, dynamic>> lectureRooms = await dbHelper.getLectureRooms();
     List<Map<String, dynamic>> laboratoryRooms =
         await dbHelper.getLaboratoryRooms();
+
+    // Sorting Classroom by room number (assuming 'room' is a string)
+    List<Map<String, dynamic>> sortedClassrooms = List.from(classrooms);
+    sortedClassrooms.sort((a, b) {
+      if (_isNumeric(a['room']) && _isNumeric(b['room'])) {
+        // If both are numeric, compare them as integers
+        return int.parse(a['room']).compareTo(int.parse(b['room']));
+      } else if (!_isNumeric(a['room']) && !_isNumeric(b['room'])) {
+        // If both are non-numeric, compare them alphabetically
+        return a['room'].compareTo(b['room']);
+      } else {
+        // Otherwise, numeric values come before non-numeric values
+        return _isNumeric(a['room']) ? -1 : 1;
+      }
+    });
+
     setState(() {
-      getClassroom = classrooms;
+      getClassroom = sortedClassrooms;
       getLectureRoom = lectureRooms;
       getlaboratoryRoom = laboratoryRooms;
     });
+  }
+
+  bool _isNumeric(String? str) {
+    if (str == null) {
+      return false;
+    }
+    return double.tryParse(str) != null;
   }
 }
