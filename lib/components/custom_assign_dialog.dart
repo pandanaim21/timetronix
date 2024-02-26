@@ -77,6 +77,9 @@ showCustomAssignDialog(
                 ElevatedButton(
                   onPressed: () {
                     onSubmit();
+                    // Reset variables here
+                    selectedFaculty = null;
+                    selectedCourse = null;
                     Navigator.pop(context);
                   },
                   child: const Text('Submit'),

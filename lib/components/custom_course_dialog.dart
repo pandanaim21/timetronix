@@ -8,16 +8,16 @@ String _formatTime(int hour, int minute) {
 void showCustomClassDialog(
   BuildContext context,
   String className,
-  List<DropdownMenuItem<String>> lectureRoomDropdownItems,
-  List<DropdownMenuItem<String>> laboratoryRoomDropdownItems,
-  Set<String> selectedLectureDays,
-  Set<String> selectedLabDays,
-  String? selectedLectureRoom,
-  String? selectedLaboratoryRoom,
-  String? selectedLectureStartTime,
-  String? selectedLectureEndTime,
-  String? selectedLabStartTime,
-  String? selectedLabEndTime,
+  List<DropdownMenuItem<String>> roomDropdownItems,
+  //List<DropdownMenuItem<String>> laboratoryRoomDropdownItems,
+  Set<String> selectedDays,
+  //Set<String> selectedLabDays,
+  String? selectedRoom,
+  //String? selectedLaboratoryRoom,
+  String? selectedStartTime,
+  String? selectedEndTime,
+  // String? selectedLabStartTime,
+  // String? selectedLabEndTime,
   List<String> days,
   Function(String?) onRoomChanged,
   Function(String) onDayPressed,
@@ -36,37 +36,21 @@ void showCustomClassDialog(
               children: [
                 DropdownButton<String>(
                   isExpanded: true,
-                  items: className == 'Lecture Class'
-                      ? lectureRoomDropdownItems
-                      : laboratoryRoomDropdownItems,
+                  items: roomDropdownItems,
                   onChanged: (value) {
-                    if (className == 'Lecture Class') {
-                      onRoomChanged(value);
-                      setState(() {
-                        selectedLectureRoom = value;
-                      });
-                    } else if (className == 'Laboratory Class') {
-                      onRoomChanged(value);
-                      setState(() {
-                        selectedLaboratoryRoom = value;
-                      });
-                    }
+                    onRoomChanged(value);
+                    setState(() {
+                      selectedRoom = value;
+                    });
                   },
-                  value: className == 'Lecture Class'
-                      ? selectedLectureRoom
-                      : selectedLaboratoryRoom,
-                  hint: className == 'Lecture Class'
-                      ? const Text('Select Lecture Room')
-                      : const Text('Select Laboratory Room'),
+                  value: selectedRoom,
+                  hint: const Text('Select Room'),
                 ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: days.map((day) {
-                    bool isSelected = (className == 'Lecture Class'
-                            ? selectedLectureDays
-                            : selectedLabDays)
-                        .contains(day);
+                    bool isSelected = (selectedDays).contains(day);
                     return IconButton(
                       onPressed: () {
                         onDayPressed(day);
@@ -98,25 +82,15 @@ void showCustomClassDialog(
                         if (picked != null) {
                           onStartTimeSelected(picked.hour, picked.minute);
                           setState(() {
-                            (className == 'Lecture Class')
-                                ? selectedLectureStartTime = _formatTime(
-                                    picked.hour,
-                                    picked
-                                        .minute) // Use _formatTime function from format_time.dart
-                                : selectedLabStartTime = _formatTime(
-                                    picked.hour,
-                                    picked
-                                        .minute); // Use _formatTime function from format_time.dart
+                            selectedStartTime =
+                                _formatTime(picked.hour, picked.minute);
                           });
                         }
                       },
                       child: SizedBox(
                         width: 150,
                         child: Text(
-                          (className == 'Lecture Class'
-                                  ? selectedLectureStartTime
-                                  : selectedLabStartTime) ??
-                              'Select Start Time',
+                          selectedStartTime ?? 'Select Start Time',
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -133,25 +107,15 @@ void showCustomClassDialog(
                         if (picked != null) {
                           onEndTimeSelected(picked.hour, picked.minute);
                           setState(() {
-                            (className == 'Lecture Class')
-                                ? selectedLectureEndTime = _formatTime(
-                                    picked.hour,
-                                    picked
-                                        .minute) // Use _formatTime function from format_time.dart
-                                : selectedLabEndTime = _formatTime(
-                                    picked.hour,
-                                    picked
-                                        .minute); // Use _formatTime function from format_time.dart
+                            selectedEndTime =
+                                _formatTime(picked.hour, picked.minute);
                           });
                         }
                       },
                       child: SizedBox(
                         width: 150,
                         child: Text(
-                          (className == 'Lecture Class'
-                                  ? selectedLectureEndTime
-                                  : selectedLabEndTime) ??
-                              'Select End Time',
+                          selectedEndTime ?? 'Select End Time',
                           textAlign: TextAlign.center,
                         ),
                       ),

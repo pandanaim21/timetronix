@@ -32,7 +32,7 @@ class DatabaseHelper {
         );
         // Create Assign table with foreign key constraints
         await database.execute(
-          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, lecture_day TEXT, lecture_start_time TEXT, lecture_end_time TEXT, laboratory_day TEXT, laboratory_start_time TEXT, laboratory_end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
+          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, day TEXT, start_time TEXT, end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
         );
       },
       version: 1,
@@ -220,16 +220,8 @@ class DatabaseHelper {
   }
 
   // Assign
-  Future<int> addAssign(
-      int facultyId,
-      int courseId,
-      int lecRoomId,
-      String lectureDay,
-      String lectureStartTime,
-      String lectureEndTime,
-      String laboratoryDay,
-      String laboratoryStartTime,
-      String laboratoryEndTime) async {
+  Future<int> addAssign(int facultyId, int courseId, int lecRoomId, String day,
+      String startTime, String endTime) async {
     final db = await database;
     return await db.insert(
       'Assign',
@@ -237,12 +229,9 @@ class DatabaseHelper {
         'faculty_id': facultyId,
         'course_id': courseId,
         'classroom_id': lecRoomId,
-        'lecture_day': lectureDay,
-        'lecture_start_time': lectureStartTime,
-        'lecture_end_time': lectureEndTime,
-        'laboratory_day': laboratoryDay,
-        'laboratory_start_time': laboratoryStartTime,
-        'laboratory_end_time': laboratoryEndTime,
+        'day': day,
+        'start_time': startTime,
+        'end_time': endTime,
       },
     );
   }

@@ -17,22 +17,30 @@ class _AddAssignsState extends State<AddAssigns> {
 
   String? _selectedFaculty;
   String? _selectedCourse;
-  String? _selectedLectureRoom;
-  String? _selectedLaboratoryRoom;
 
-  String? _selectedLectureStartTime;
-  String? _selectedLectureEndTime;
-  final Set<String> _selectedLectureDays = {};
-
-  String? _selectedLabStartTime;
-  String? _selectedLabEndTime;
-  final Set<String> _selectedLabDays = {};
+  //for lecture
+  // String? _selectedLectureRoom;
+  // final Set<String> _selectedLectureDays = {};
+  // String? _selectedLectureStartTime;
+  // String? _selectedLectureEndTime;
+  //for laboratory
+  // String? _selectedLaboratoryRoom;
+  // final Set<String> _selectedLabDays = {};
+  // String? _selectedLabStartTime;
+  // String? _selectedLabEndTime;
+  //
+  String? _selectedRoom;
+  final Set<String> _selectedDays = {};
+  String? _selectedStartTime;
+  String? _selectedEndTime;
 
   List<DropdownMenuItem<String>> _facultyDropdownItems = [];
   List<Map<String, dynamic>> _courseDropdownItems = [];
 
   List<DropdownMenuItem<String>> _lectureRoomDropdownItems = [];
   List<DropdownMenuItem<String>> _laboratoryRoomDropdownItems = [];
+  //List<DropdownMenuItem<String>> _roomDropdownItems = [];
+
   List<Map<String, dynamic>> assigns = [];
 
   final List<String> _days = [
@@ -55,7 +63,9 @@ class _AddAssignsState extends State<AddAssigns> {
     List<Map<String, dynamic>> assignData = await dbHelper.getAssign();
     final faculties = await dbHelper.getFaculty();
     final courses = await dbHelper.getCurriculum();
-    final classrooms = await dbHelper.getClassrooms();
+    //final classrooms = await dbHelper.getClassrooms();
+    final lecRooms = await dbHelper.getLectureRooms();
+    final labRooms = await dbHelper.getLaboratoryRooms();
 
     setState(
       () {
@@ -75,23 +85,39 @@ class _AddAssignsState extends State<AddAssigns> {
           };
         }).toList();
 
-        _lectureRoomDropdownItems = classrooms
-            .where((classroom) => classroom['type'] == 'Lecture Class')
-            .map<DropdownMenuItem<String>>((classroom) {
+        _lectureRoomDropdownItems =
+            lecRooms.map<DropdownMenuItem<String>>((lecRoom) {
           return DropdownMenuItem<String>(
-            value: classroom['id'].toString(),
-            child: Text(classroom['room']),
+            value: lecRoom['id'].toString(),
+            child: Text(lecRoom['room']),
           );
         }).toList();
 
-        _laboratoryRoomDropdownItems = classrooms
-            .where((classroom) => classroom['type'] == 'Laboratory Class')
-            .map<DropdownMenuItem<String>>((classroom) {
+        // _lectureRoomDropdownItems = classrooms
+        //     .where((classroom) => classroom['type'] == 'Lecture Class')
+        //     .map<DropdownMenuItem<String>>((classroom) {
+        //   return DropdownMenuItem<String>(
+        //     value: classroom['id'].toString(),
+        //     child: Text(classroom['room']),
+        //   );
+        // }).toList();
+
+        _laboratoryRoomDropdownItems =
+            labRooms.map<DropdownMenuItem<String>>((labRoom) {
           return DropdownMenuItem<String>(
-            value: classroom['id'].toString(),
-            child: Text(classroom['room']),
+            value: labRoom['id'].toString(),
+            child: Text(labRoom['room']),
           );
         }).toList();
+
+        // _laboratoryRoomDropdownItems = classrooms
+        //     .where((classroom) => classroom['type'] == 'Laboratory Class')
+        //     .map<DropdownMenuItem<String>>((classroom) {
+        //   return DropdownMenuItem<String>(
+        //     value: classroom['id'].toString(),
+        //     child: Text(classroom['room']),
+        //   );
+        // }).toList();
 
         assigns = assignData;
       },
@@ -144,56 +170,37 @@ class _AddAssignsState extends State<AddAssigns> {
     return formatTime(hour, minute);
   }
 
-  _showClassDialog(String className) {
+  _showClassDialog(
+      String className, List<DropdownMenuItem<String>> roomDropdownItems) {
     showCustomClassDialog(
       context,
       className,
-      _lectureRoomDropdownItems,
-      _laboratoryRoomDropdownItems,
-      _selectedLectureDays,
-      _selectedLabDays,
-      _selectedLectureRoom,
-      _selectedLaboratoryRoom,
-      _selectedLectureStartTime,
-      _selectedLectureEndTime,
-      _selectedLabStartTime,
-      _selectedLabEndTime,
+      roomDropdownItems,
+      //_laboratoryRoomDropdownItems,
+      _selectedDays,
+      //_selectedLabDays,
+      _selectedRoom,
+      //_selectedLaboratoryRoom,
+      _selectedStartTime,
+      _selectedEndTime,
+      // _selectedLabStartTime,
+      // _selectedLabEndTime,
       _days,
       (String? value) {
-        if (className == 'Lecture Class') {
-          _selectedLectureRoom = value;
-        } else {
-          _selectedLaboratoryRoom = value;
-        }
+        _selectedRoom = value;
       },
       (String day) {
-        if (className == 'Lecture Class') {
-          if (_selectedLectureDays.contains(day)) {
-            _selectedLectureDays.remove(day);
-          } else {
-            _selectedLectureDays.add(day);
-          }
+        if (_selectedDays.contains(day)) {
+          _selectedDays.remove(day);
         } else {
-          if (_selectedLabDays.contains(day)) {
-            _selectedLabDays.remove(day);
-          } else {
-            _selectedLabDays.add(day);
-          }
+          _selectedDays.add(day);
         }
       },
       (int hour, int minute) {
-        if (className == 'Lecture Class') {
-          _selectedLectureStartTime = _formatTime(hour, minute);
-        } else {
-          _selectedLabStartTime = _formatTime(hour, minute);
-        }
+        _selectedStartTime = _formatTime(hour, minute);
       },
       (int hour, int minute) {
-        if (className == 'Lecture Class') {
-          _selectedLectureEndTime = _formatTime(hour, minute);
-        } else {
-          _selectedLabEndTime = _formatTime(hour, minute);
-        }
+        _selectedEndTime = _formatTime(hour, minute);
       },
     );
   }
@@ -258,38 +265,17 @@ class _AddAssignsState extends State<AddAssigns> {
                                   const SizedBox(height: 10),
                                   const Text('Lecture Class:'),
                                   Text(
-                                    'Lecture Days: ${assigns[index]['lecture_day']}',
+                                    'Lecture Days: ${assigns[index]['day']}',
                                   ),
                                   Text(
-                                    'Lecture Start Time: ${assigns[index]['lecture_start_time']}',
+                                    'Lecture Start Time: ${assigns[index]['start_time']}',
                                   ),
                                   Text(
-                                    'Lecture End Time: ${assigns[index]['lecture_end_time']}',
+                                    'Lecture End Time: ${assigns[index]['end_time']}',
                                   ),
                                   Text(
                                     'Lecture Room: ${assignmentDetails?['room']}',
                                   ),
-                                  if (assignmentDetails?['hasLab'] == 'YES')
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 10),
-                                        const Text('Laboratory Class:'),
-                                        Text(
-                                          'Laboratory Days: ${assigns[index]['laboratory_day']}',
-                                        ),
-                                        Text(
-                                          'Lab Start Time: ${assigns[index]['laboratory_start_time']}',
-                                        ),
-                                        Text(
-                                          'Lab End Time: ${assigns[index]['laboratory_end_time']}',
-                                        ),
-                                        Text(
-                                          'Laboratory Room: ${assignmentDetails?['room']}',
-                                        ),
-                                      ],
-                                    ),
                                 ],
                               ),
                               trailing: IconButton(
@@ -300,6 +286,63 @@ class _AddAssignsState extends State<AddAssigns> {
                               ),
                             ),
                           ),
+                          if (assignmentDetails?['hasLab'] == 'YES')
+                            Card(
+                              color: Colors.blue[200],
+                              elevation: 2,
+                              child: ListTile(
+                                title: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Faculty: ${assignmentDetails?['faculty_firstname']}, ${assignmentDetails?['faculty_lastname']}',
+                                    ),
+                                    Text(
+                                      'Min Load: ${assignmentDetails?['min_load']}',
+                                    ),
+                                    Text(
+                                      'Max Load: ${assignmentDetails?['max_load']}',
+                                    ),
+                                    Text(
+                                      'Priority Number: ${assignmentDetails?['priority_number']}',
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'Course: ${assignmentDetails?['course']}',
+                                    ),
+                                    Text(
+                                      'Description: ${assignmentDetails?['description']}',
+                                    ),
+                                    Text(
+                                      'Units: ${assignmentDetails?['units']}',
+                                    ),
+                                    Text(
+                                      'Has Laboratory? ${assignmentDetails?['hasLab']}',
+                                    ),
+                                    const SizedBox(height: 10),
+                                    const Text('Laboratory Class:'),
+                                    Text(
+                                      'Laboratory Days: ${assigns[index]['day']}',
+                                    ),
+                                    Text(
+                                      'Lab Start Time: ${assigns[index]['start_time']}',
+                                    ),
+                                    Text(
+                                      'Lab End Time: ${assigns[index]['end_time']}',
+                                    ),
+                                    Text(
+                                      'Laboratory Room: ${assignmentDetails?['room']}',
+                                    ),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    removeAssign(assigns[index]['id']);
+                                  },
+                                ),
+                              ),
+                            ),
                         ],
                       );
                     }
@@ -322,10 +365,11 @@ class _AddAssignsState extends State<AddAssigns> {
               _selectedCourse = value;
             },
             () {
-              _showClassDialog('Lecture Class');
+              _showClassDialog('Lecture Class', _lectureRoomDropdownItems);
             },
             () {
-              _showClassDialog('Laboratory Class');
+              _showClassDialog(
+                  'Laboratory Class', _laboratoryRoomDropdownItems);
             },
             () {
               addAssign();
@@ -338,24 +382,33 @@ class _AddAssignsState extends State<AddAssigns> {
   }
 
   void addAssign() async {
-    String labStartTime = _selectedLabStartTime ?? 'N/A';
-    String labEndTime = _selectedLabEndTime ?? 'N/A';
-    String labDays =
-        _selectedLabDays.isNotEmpty ? _selectedLabDays.join(', ') : 'N/A';
-
     await dbHelper.addAssign(
       int.parse(_selectedFaculty!),
       int.parse(_selectedCourse!),
-      int.parse(_selectedLectureRoom!),
-      _selectedLectureDays.join(', '),
-      _selectedLectureStartTime!,
-      _selectedLectureEndTime!,
-      labDays,
-      labStartTime,
-      labEndTime,
+      int.parse(_selectedRoom!),
+      _selectedDays.join(', '),
+      _selectedStartTime!,
+      _selectedEndTime!,
     );
     _loadData();
   }
+
+  // void addAssign() async {
+  //   // String labStartTime = _selectedLabStartTime ?? 'N/A';
+  //   // String labEndTime = _selectedLabEndTime ?? 'N/A';
+  //   // String labDays =
+  //   //     _selectedLabDays.isNotEmpty ? _selectedLabDays.join(', ') : 'N/A';
+
+  //   await dbHelper.addAssign(
+  //     int.parse(_selectedFaculty!),
+  //     int.parse(_selectedCourse!),
+  //     int.parse(_selectedRoom!),
+  //     _selectedDays.join(', '),
+  //     _selectedStartTime!,
+  //     _selectedEndTime!,
+  //   );
+  //   _loadData();
+  // }
 
   void removeAssign(int id) async {
     await dbHelper.removeAssign(id);
