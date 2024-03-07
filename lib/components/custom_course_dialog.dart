@@ -23,6 +23,7 @@ void showCustomClassDialog(
   Function(String) onDayPressed,
   Function(int, int) onStartTimeSelected,
   Function(int, int) onEndTimeSelected,
+  Function() resetVariable,
 ) {
   showDialog(
     context: context,
@@ -128,6 +129,7 @@ void showCustomClassDialog(
                   children: [
                     ElevatedButton(
                       onPressed: () {
+                        resetVariable();
                         Navigator.pop(context);
                       },
                       child: const Text('Cancel'),

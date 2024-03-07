@@ -9,6 +9,7 @@ showCustomAssignDialog(
   Function() onLectureClassSelected,
   Function() onLaboratoryClassSelected,
   Function() onSubmit,
+  Function() resetVariable,
 ) {
   String? selectedFaculty;
   Map<String, dynamic>? selectedCourse;
@@ -74,15 +75,32 @@ showCustomAssignDialog(
                   ],
                 ),
                 const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    onSubmit();
-                    // Reset variables here
-                    selectedFaculty = null;
-                    selectedCourse = null;
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Submit'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Reset variables here
+                        selectedFaculty = null;
+                        selectedCourse = null;
+                        resetVariable();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        onSubmit();
+                        // Reset variables here
+                        selectedFaculty = null;
+                        selectedCourse = null;
+                        resetVariable();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ],
                 ),
               ],
             ),

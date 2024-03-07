@@ -347,13 +347,65 @@ class DatabaseHelper {
       Curriculum.meeting, 
       Curriculum.hasLab, 
       Classroom.room, 
-      Classroom.type
+      Classroom.type,
+      Assign.day,
+      Assign.start_time,
+      Assign.end_time
     FROM Assign
     INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
     INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
     INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
     WHERE Assign.id = ?
   ''', [assign['id']]);
+    return result.first;
+  }
+
+  Future<Map<String, dynamic>> getLectureAssignment(
+      int facultyId, int courseId) async {
+    final db = await initializeDatabase();
+    final result = await db.rawQuery('''
+    SELECT 
+      Faculty.firstname AS faculty_firstname, 
+      Faculty.lastname AS faculty_lastname,
+      Faculty.min_load,
+      Faculty.max_load,
+      Faculty.priority_number,
+      Curriculum.course, 
+      Curriculum.description, 
+      Curriculum.year, 
+      Curriculum.semester, 
+      Curriculum.units, 
+      Curriculum.meeting, 
+      Curriculum.hasLab, 
+      Classroom.room, 
+      Classroom.type,
+      Assign.day,
+      Assign.start_time,
+      Assign.end_time
+    FROM Assign
+    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
+    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
+    WHERE Assign.faculty_id = ? AND Assign.course_id = ?
+  ''', [facultyId, courseId]);
+    return result.first;
+  }
+
+  Future<Map<String, dynamic>> getLaboratoryAssignment(
+      int facultyId, int courseId, String type) async {
+    final db = await initializeDatabase();
+    final result = await db.rawQuery('''
+    SELECT 
+      Classroom.room, 
+      Assign.day,
+      Assign.start_time,
+      Assign. end_time
+    FROM Assign
+    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
+    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
+    WHERE Assign.faculty_id = ? AND Assign.course_id = ? AND Classroom.type = ?
+  ''', [facultyId, courseId, type]);
     return result.first;
   }
 }
