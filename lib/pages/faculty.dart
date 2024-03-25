@@ -34,7 +34,7 @@ class _AddFacultyState extends State<AddFaculty> {
         backgroundColor: Colors.blue[800],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
             Padding(

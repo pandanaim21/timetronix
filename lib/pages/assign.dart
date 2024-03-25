@@ -133,36 +133,71 @@ class _AddAssignsState extends State<AddAssigns> {
         title: const Text('Assign Faculty'),
         backgroundColor: Colors.blue[800],
       ),
-      body: const Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showCustomAssignDialog(
-            context,
-            _facultyDropdownItems,
-            _courseDropdownItems,
-            (String? value) {
-              _selectedFaculty = value;
-            },
-            (String? value) {
-              _selectedCourse = value;
-            },
-            () {
-              _showClassDialog('Lecture Class', _lectureRoomDropdownItems);
-            },
-            () {
-              _showClassDialog(
-                  'Laboratory Class', _laboratoryRoomDropdownItems);
-            },
-            () {
-              addAssign();
-            },
-            _resetVariables,
-          );
-        },
-        child: const Icon(Icons.add),
+      body: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      showCustomAssignDialog(
+                        context,
+                        _facultyDropdownItems,
+                        _courseDropdownItems,
+                        (String? value) {
+                          _selectedFaculty = value;
+                        },
+                        (String? value) {
+                          _selectedCourse = value;
+                        },
+                        () {
+                          _showClassDialog(
+                              'Lecture Class', _lectureRoomDropdownItems);
+                        },
+                        () {
+                          addAssign();
+                        },
+                        _resetVariables,
+                        'Lecture Class',
+                      );
+                    },
+                    child: const Text('Add Lecture'),
+                  ),
+                  const SizedBox(width: 8.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      showCustomAssignDialog(
+                        context,
+                        _facultyDropdownItems,
+                        _courseDropdownItems,
+                        (String? value) {
+                          _selectedFaculty = value;
+                        },
+                        (String? value) {
+                          _selectedCourse = value;
+                        },
+                        () {
+                          _showClassDialog(
+                              'Laboratory Class', _laboratoryRoomDropdownItems);
+                        },
+                        () {
+                          addAssign();
+                        },
+                        _resetVariables,
+                        'Laboratory Class',
+                      );
+                    },
+                    child: const Text('Add Laboratory'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

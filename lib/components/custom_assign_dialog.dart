@@ -6,10 +6,10 @@ showCustomAssignDialog(
   List<Map<String, dynamic>> courseDropdownItems,
   Function(String?) onFacultySelected,
   Function(String?) onCourseSelected,
-  Function() onLectureClassSelected,
-  Function() onLaboratoryClassSelected,
+  Function() onClassSelected,
   Function() onSubmit,
   Function() resetVariable,
+  String ClassButtonText,
 ) {
   String? selectedFaculty;
   Map<String, dynamic>? selectedCourse;
@@ -55,24 +55,11 @@ showCustomAssignDialog(
                   hint: const Text('Select Course'),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        onLectureClassSelected();
-                      },
-                      child: const Text('Lecture Class'),
-                    ),
-                    const SizedBox(width: 15),
-                    ElevatedButton(
-                      onPressed: selectedCourse != null &&
-                              selectedCourse!['hasLab'] == 'YES'
-                          ? onLaboratoryClassSelected
-                          : null,
-                      child: const Text('Laboratory Class'),
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: () {
+                    onClassSelected();
+                  },
+                  child: Text(ClassButtonText),
                 ),
                 const SizedBox(height: 30),
                 Row(
