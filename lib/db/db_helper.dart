@@ -23,9 +23,14 @@ class DatabaseHelper {
           "CREATE TABLE Classroom(id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, type TEXT)",
         );
         await database.execute(
+          "CREATE TABLE LectureRoom(id INTEGER PRIMARY KEY AUTOINCREMENT, lecture_room TEXT)",
+        );
+        await database.execute(
+          "CREATE TABLE LaboratoryRoom(id INTEGER PRIMARY KEY AUTOINCREMENT, laboratory_room TEXT)",
+        );
+        await database.execute(
           "CREATE TABLE Curriculum(course_id TEXT PRIMARY KEY, description TEXT, year TEXT, semester TEXT, units INTEGER, meeting TEXT, hasLab TEXT)",
         );
-        // Create Faculty table
         await database.execute(
           "CREATE TABLE Faculty(id INTEGER PRIMARY KEY AUTOINCREMENT, firstname TEXT, lastname TEXT, position TEXT, min_load INTEGER, max_load INTEGER, priority_number INTEGER)",
         );
@@ -45,6 +50,26 @@ class DatabaseHelper {
       {
         'room': room,
         'type': type,
+      },
+    );
+  }
+
+  Future<int> addLectureRoom(String room) async {
+    final db = await database;
+    return await db.insert(
+      'LectureRoom',
+      {
+        'lecture_room': room,
+      },
+    );
+  }
+
+  Future<int> addLaboratoryRoom(String room) async {
+    final db = await database;
+    return await db.insert(
+      'LaboratoryRoom',
+      {
+        'laboratory_room': room,
       },
     );
   }

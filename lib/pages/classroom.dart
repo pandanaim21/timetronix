@@ -218,9 +218,11 @@ class _AddClassroomState extends State<AddClassroom> {
       String laboratory = row[1]?.value?.toString() ?? '';
       if (lecture.isNotEmpty) {
         await dbHelper.addClassroom(lecture, 'Lecture Class');
+        await dbHelper.addLectureRoom(lecture);
       }
       if (laboratory.isNotEmpty) {
         await dbHelper.addClassroom(laboratory, 'Laboratory Class');
+        await dbHelper.addLaboratoryRoom(lecture);
       }
     }
     loadClassrooms();
