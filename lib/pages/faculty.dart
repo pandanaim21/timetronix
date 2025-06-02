@@ -280,7 +280,13 @@ class _AddFacultyState extends State<AddFaculty> {
     loadFaculties();
   }
 
+  // void removeFaculty(int id) async {
+  //   await dbHelper.removeFaculty(id);
+  //   loadFaculties();
+  // }
+
   void removeFaculty(int id) async {
+    await dbHelper.removeAssignByFacultyId(id);
     await dbHelper.removeFaculty(id);
     loadFaculties();
   }

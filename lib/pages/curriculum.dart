@@ -73,7 +73,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
                           color: Colors.blue[200],
                           child: ListTile(
                             title: Text(
-                                'Course Code: ${getCurriculum[index]['course']}'),
+                                'Course Code: ${getCurriculum[index]['course_id']}'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -98,14 +98,16 @@ class _AddCurriculumState extends State<AddCurriculum> {
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     _showEditCurriculumDialog(
-                                        getCurriculum[index]);
+                                      getCurriculum[index],
+                                    );
                                   },
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () {
-                                    removeCurriculum(
-                                        getCurriculum[index]['id']);
+                                    removeCourse(
+                                      getCurriculum[index]['course_id'],
+                                    );
                                   },
                                 ),
                               ],
@@ -192,7 +194,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
   void _showEditCurriculumDialog(Map<String, dynamic> curriculum) {
     _showCustomDialog(
       'Edit Course',
-      curriculum['course'],
+      curriculum['course_id'],
       curriculum['description'],
       curriculum['year'],
       curriculum['semester'],
@@ -202,8 +204,7 @@ class _AddCurriculumState extends State<AddCurriculum> {
       (course, description, selectedYear, selectedSemester, units, meeting,
           hasLab) {
         updateCurriculum(
-          curriculum['id'],
-          course,
+          curriculum['course_id'],
           description,
           selectedYear,
           selectedSemester,
@@ -255,15 +256,23 @@ class _AddCurriculumState extends State<AddCurriculum> {
     loadCurriculums();
   }
 
-  void removeCurriculum(int id) async {
-    await dbHelper.removeCurriculum(id);
+  void removeCourse(String course) async {
+    await dbHelper.removeAssignByCourseID(course);
+    await dbHelper.removeCourse(course);
     loadCurriculums();
   }
 
-  void updateCurriculum(int id, String course, String description, String year,
-      String semester, int units, String meeting, String hasLab) async {
+  void updateCurriculum(
+    String course,
+    String description,
+    String year,
+    String semester,
+    int units,
+    String meeting,
+    String hasLab,
+  ) async {
     await dbHelper.editCurriculum(
-        id, course, description, year, semester, units, meeting, hasLab);
+        course, description, year, semester, units, meeting, hasLab);
     loadCurriculums();
   }
 

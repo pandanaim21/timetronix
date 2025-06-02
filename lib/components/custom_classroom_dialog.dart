@@ -26,14 +26,14 @@ class CustomClassroomDialog extends StatefulWidget {
 
 class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
   late String _room;
-  late String _type;
+  late String _selectedType;
   late TextEditingController _roomController;
 
   @override
   void initState() {
     super.initState();
     _room = widget.room;
-    _type = widget.selectedDropdownItem;
+    _selectedType = widget.selectedDropdownItem;
 
     _roomController = TextEditingController(text: _room);
   }
@@ -51,7 +51,7 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
             hintText: 'Room',
             controller: _roomController,
             textAlign: TextAlign.center,
-            symmetricPadding: const EdgeInsets.symmetric(horizontal: 45.0),
+            //symmetricPadding: const EdgeInsets.symmetric(horizontal: 45.0),
             leftPadding: const EdgeInsets.only(left: 0.0),
             onChanged: (value) {
               setState(() {
@@ -60,30 +60,56 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
             },
           ),
           const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: DropdownButton<String>(
-              isExpanded: true,
-              value: _type,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _type = newValue!;
-                });
-              },
-              borderRadius: BorderRadius.circular(12.0),
-              //alignment: Alignment.center,
-              items: widget.dropdownItems
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Text(value),
-                  ),
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) {
+              return widget.dropdownItems.map((roomType) {
+                return PopupMenuItem<String>(
+                  value: roomType,
+                  child: Text(roomType),
                 );
-              }).toList(),
+              }).toList();
+            },
+            onSelected: (String newValue) {
+              setState(() {
+                _selectedType = newValue;
+              });
+            },
+            offset: const Offset(0, 50), // Always opens below
+            constraints: const BoxConstraints(maxHeight: 250), // Limit height
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Position',
+                border: OutlineInputBorder(),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              ),
+              child: Text(_selectedType),
             ),
           ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          //   child: DropdownButton<String>(
+          //     isExpanded: true,
+          //     value: _type,
+          //     onChanged: (String? newValue) {
+          //       setState(() {
+          //         _type = newValue!;
+          //       });
+          //     },
+          //     borderRadius: BorderRadius.circular(12.0),
+          //     //alignment: Alignment.center,
+          //     items: widget.dropdownItems
+          //         .map<DropdownMenuItem<String>>((String value) {
+          //       return DropdownMenuItem<String>(
+          //         value: value,
+          //         child: Padding(
+          //           padding: const EdgeInsets.only(left: 10.0),
+          //           child: Text(value),
+          //         ),
+          //       );
+          //     }).toList(),
+          //   ),
+          // ),
           const SizedBox(height: 50),
         ],
       ),
@@ -96,7 +122,7 @@ class _CustomClassroomDialogState extends State<CustomClassroomDialog> {
         ),
         TextButton(
           onPressed: () {
-            widget.onSubmit(_room, _type);
+            widget.onSubmit(_room, _selectedType);
             Navigator.of(context).pop();
           },
           child: const Text('Submit'),

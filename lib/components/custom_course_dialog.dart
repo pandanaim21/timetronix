@@ -8,7 +8,8 @@ String _formatTime(int hour, int minute) {
 void showCustomClassDialog(
   BuildContext context,
   String className,
-  List<DropdownMenuItem<String>> roomDropdownItems,
+  // List<DropdownMenuItem<String>> roomDropdownItems,
+  List<Map<String, dynamic>> roomDropdownItems,
   //List<DropdownMenuItem<String>> laboratoryRoomDropdownItems,
   Set<String> selectedDays,
   //Set<String> selectedLabDays,
@@ -19,12 +20,13 @@ void showCustomClassDialog(
   // String? selectedLabStartTime,
   // String? selectedLabEndTime,
   List<String> days,
-  Function(String?) onRoomChanged,
-  Function(String) onDayPressed,
+  Function(String?) onRoomSeleceted,
+  Function(String) onDaySeleceted,
   Function(int, int) onStartTimeSelected,
   Function(int, int) onEndTimeSelected,
   Function() resetVariable,
 ) {
+  Map<String, dynamic>? selectedRoom;
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -35,18 +37,45 @@ void showCustomClassDialog(
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DropdownButton<String>(
-                  isExpanded: true,
-                  items: roomDropdownItems,
-                  onChanged: (value) {
-                    onRoomChanged(value);
+                PopupMenuButton<Map<String, dynamic>>(
+                  itemBuilder: (BuildContext context) {
+                    return roomDropdownItems.map((room) {
+                      return PopupMenuItem<Map<String, dynamic>>(
+                        value: room,
+                        child: Text(room['room']),
+                      );
+                    }).toList();
+                  },
+                  onSelected: (Map<String, dynamic> value) {
                     setState(() {
                       selectedRoom = value;
                     });
+                    onRoomSeleceted(value['room_id'].toString());
                   },
-                  value: selectedRoom,
-                  hint: const Text('Select Room'),
+                  offset: const Offset(0, 50), // Always opens below
+                  constraints: const BoxConstraints(maxHeight: 150),
+                  child: InputDecorator(
+                    decoration: const InputDecoration(
+                      labelText: 'Select Room',
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+                    ),
+                    child: Text(selectedRoom?['room'] ?? ''),
+                  ), // Limit height
                 ),
+                // DropdownButton<String>(
+                //   isExpanded: true,
+                //   items: roomDropdownItems,
+                //   onChanged: (value) {
+                //     onRoomChanged(value);
+                //     setState(() {
+                //       selectedRoom = value;
+                //     });
+                //   },
+                //   value: selectedRoom,
+                //   hint: const Text('Select Room'),
+                // ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -54,7 +83,7 @@ void showCustomClassDialog(
                     bool isSelected = (selectedDays).contains(day);
                     return IconButton(
                       onPressed: () {
-                        onDayPressed(day);
+                        onDaySeleceted(day);
                         setState(() {}); // State changed, trigger rebuild
                       },
                       icon: CircleAvatar(

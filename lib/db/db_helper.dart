@@ -22,9 +22,8 @@ class DatabaseHelper {
         await database.execute(
           "CREATE TABLE Classroom(id INTEGER PRIMARY KEY AUTOINCREMENT, room TEXT, type TEXT)",
         );
-        // Create Curriculum table
         await database.execute(
-          "CREATE TABLE Curriculum(id INTEGER PRIMARY KEY AUTOINCREMENT, course TEXT, description TEXT, year INTEGER, semester TEXT, units INTEGER, meeting TEXT, hasLab TEXT)",
+          "CREATE TABLE Curriculum(course_id TEXT PRIMARY KEY, description TEXT, year TEXT, semester TEXT, units INTEGER, meeting TEXT, hasLab TEXT)",
         );
         // Create Faculty table
         await database.execute(
@@ -32,8 +31,7 @@ class DatabaseHelper {
         );
         // Create Assign table with foreign key constraints
         await database.execute(
-          "CREATE TABLE Assign(id INTEGER PRIMARY KEY AUTOINCREMENT, faculty_id INTEGER, course_id INTEGER, classroom_id INTEGER, day TEXT, start_time TEXT, end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(id), FOREIGN KEY (classroom_id) REFERENCES Classroom(id))",
-        );
+            "CREATE TABLE Assign (id INTEGER PRIMARY KEY AUTOINCREMENT,  faculty_id INTEGER, course_id TEXT, room_id INTEGER, day TEXT, start_time TEXT, end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(course_id), FOREIGN KEY (room_id) REFERENCES Room(id))");
       },
       version: 1,
     );
@@ -64,12 +62,21 @@ class DatabaseHelper {
     );
   }
 
-  Future<int> removeClassroom(String room) async {
+  Future<int> removeClassroom(int roomId) async {
     final db = await database;
     return await db.delete(
       'Classroom',
-      where: "room = ?",
-      whereArgs: [room],
+      where: "id = ?",
+      whereArgs: [roomId],
+    );
+  }
+
+  Future<int> removeAssignByRoomID(int roomId) async {
+    final db = await database;
+    return await db.delete(
+      'Assign',
+      where: "room_id = ?",
+      whereArgs: [roomId],
     );
   }
 
@@ -106,7 +113,7 @@ class DatabaseHelper {
     return await db.insert(
       'Curriculum',
       {
-        'course': course,
+        'course_id': course,
         'description': description,
         'year': year,
         'semester': semester,
@@ -118,8 +125,7 @@ class DatabaseHelper {
   }
 
   Future<int> editCurriculum(
-      int id,
-      String newCourse,
+      String course,
       String newDescription,
       String newYear,
       String newSemester,
@@ -130,7 +136,6 @@ class DatabaseHelper {
     return await db.update(
       'Curriculum',
       {
-        'course': newCourse,
         'description': newDescription,
         'year': newYear,
         'semester': newSemester,
@@ -138,17 +143,26 @@ class DatabaseHelper {
         'meeting': newMeeting,
         'hasLab': newHasLab
       },
-      where: "id = ?",
-      whereArgs: [id],
+      where: "course_id = ?",
+      whereArgs: [course],
     );
   }
 
-  Future<int> removeCurriculum(int id) async {
+  Future<int> removeCourse(String course) async {
     final db = await database;
     return await db.delete(
       'Curriculum',
-      where: "id = ?",
-      whereArgs: [id],
+      where: "course_id = ?",
+      whereArgs: [course],
+    );
+  }
+
+  Future<int> removeAssignByCourseID(String courseId) async {
+    final db = await database;
+    return await db.delete(
+      'Assign',
+      where: "course_id = ?",
+      whereArgs: [courseId],
     );
   }
 
@@ -214,13 +228,33 @@ class DatabaseHelper {
     );
   }
 
+  Future<int> removeAssignByFacultyId(int facultyId) async {
+    final db = await database;
+    return await db.delete(
+      'Assign',
+      where: "faculty_id = ?",
+      whereArgs: [facultyId],
+    );
+  }
+
   Future<List<Map<String, dynamic>>> getFaculty() async {
     final db = await database;
     return await db.query('Faculty');
   }
 
   // Assign
-  Future<int> addAssign(int facultyId, int courseId, int lecRoomId, String day,
+  // Future<int> addAssign(int facultyId, String courseId, int parse, String join,
+  //     String s, String t) async {
+  //   final db = await database;
+  //   return await db.insert(
+  //     'Assign',
+  //     {
+  //       'faculty_id': facultyId,
+  //       'course_id': courseId,
+  //     },
+  //   );
+  // }
+  Future<int> addAssign(int facultyId, String courseId, int roomId, String days,
       String startTime, String endTime) async {
     final db = await database;
     return await db.insert(
@@ -228,38 +262,21 @@ class DatabaseHelper {
       {
         'faculty_id': facultyId,
         'course_id': courseId,
-        'classroom_id': lecRoomId,
-        'day': day,
+        'room_id': roomId,
+        'day': days,
         'start_time': startTime,
         'end_time': endTime,
       },
     );
   }
 
-  Future<int> editAssign(
-      int id,
-      int newFacultyId,
-      int newCourseId,
-      int newClassroomId,
-      String newLectureDay,
-      String newLectureStartTime,
-      String newLectureEndTime,
-      String newLaboratoryDay,
-      String newLaboratoryStartTime,
-      String newLaboratoryEndTime) async {
+  Future<int> editAssign(int id, int newFacultyId, int newCourseId) async {
     final db = await database;
     return await db.update(
       'Assign',
       {
         'faculty_id': newFacultyId,
         'course_id': newCourseId,
-        'classroom_id': newClassroomId,
-        'lecture_day': newLectureDay,
-        'lecture_start_time': newLectureStartTime,
-        'lecture_end_time': newLectureEndTime,
-        'laboratory_day': newLaboratoryDay,
-        'laboratory_start_time': newLaboratoryStartTime,
-        'laboratory_end_time': newLaboratoryEndTime,
       },
       where: "id = ?",
       whereArgs: [id],
@@ -280,132 +297,32 @@ class DatabaseHelper {
     return await db.query('Assign');
   }
 
-  // //Getters
-  // // Get room details by ID
-  // Future<Map<String, dynamic>> getRoomDetails(String? roomId) async {
-  //   final db = await database;
-  //   List<Map<String, dynamic>> result = await db.query(
-  //     'Classroom',
-  //     where: 'id = ?',
-  //     whereArgs: [roomId],
-  //   );
-  //   return result.isNotEmpty ? result.first : {};
-  // }
+  Future<List<Map<String, dynamic>>> getAssignment() async {
+    final db = await database;
+    return await db.rawQuery('''
+    SELECT 
+      Faculty.firstname,
+      Faculty.lastname,
+      Curriculum.course_id,
+      Classroom.room,
+      day,
+      start_time,
+      end_time
+    FROM Assign
+    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
+    INNER JOIN Curriculum ON Assign.course_id = Curriculum.course_id
+    INNER JOIN Classroom ON Assign.room_id = Classroom.id
+  ''');
+  }
 
-  // // Get course details by ID
-  // Future<Map<String, dynamic>> getCourseDetails(String? courseId) async {
+  // For assignment.dart
+  // Future<List<Map<String, dynamic>>> getAssignment() async {
   //   final db = await database;
-  //   List<Map<String, dynamic>> result = await db.query(
-  //     'Curriculum',
-  //     where: 'id = ?',
-  //     whereArgs: [courseId],
-  //   );
-  //   return result.isNotEmpty ? result.first : {};
-  // }
-
-  // // Get faculty details by ID
-  // Future<Map<String, dynamic>> getFacultyDetails(String? facultyId) async {
-  //   final db = await database;
-  //   List<Map<String, dynamic>> result = await db.query(
-  //     'Faculty',
-  //     where: 'id = ?',
-  //     whereArgs: [facultyId],
-  //   );
-  //   return result.isNotEmpty ? result.first : {};
-  // }
-
-  // // Get assignment details by ID
-  // Future<Map<String, dynamic>> getAssignmentDetails(
-  //     Map<String, dynamic> assign) async {
-  //   final db = await initializeDatabase();
-  //   final result = await db.rawQuery('''
-  //   SELECT Faculty.firstname AS faculty_firstname, Curriculum.course, Classroom.room
+  //   return await db.rawQuery('''
+  //   SELECT Faculty.firstname, Faculty.lastname, Curriculum.course
   //   FROM Assign
   //   INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
   //   INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
-  //   INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
-  //   WHERE Assign.id = ?
-  // ''', [assign['id']]);
-  //   return result.first;
+  // ''');
   // }
-
-  Future<Map<String, dynamic>> getAssignment(
-      Map<String, dynamic> assign) async {
-    final db = await initializeDatabase();
-    final result = await db.rawQuery('''
-    SELECT 
-      Faculty.firstname AS faculty_firstname, 
-      Faculty.lastname AS faculty_lastname,
-      Faculty.min_load,
-      Faculty.max_load,
-      Faculty.priority_number,
-      Curriculum.course, 
-      Curriculum.description, 
-      Curriculum.year, 
-      Curriculum.semester, 
-      Curriculum.units, 
-      Curriculum.meeting, 
-      Curriculum.hasLab, 
-      Classroom.room, 
-      Classroom.type,
-      Assign.day,
-      Assign.start_time,
-      Assign.end_time
-    FROM Assign
-    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
-    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
-    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
-    WHERE Assign.id = ?
-  ''', [assign['id']]);
-    return result.first;
-  }
-
-  Future<Map<String, dynamic>> getLectureAssignment(
-      int facultyId, int courseId) async {
-    final db = await initializeDatabase();
-    final result = await db.rawQuery('''
-    SELECT 
-      Faculty.firstname AS faculty_firstname, 
-      Faculty.lastname AS faculty_lastname,
-      Faculty.min_load,
-      Faculty.max_load,
-      Faculty.priority_number,
-      Curriculum.course, 
-      Curriculum.description, 
-      Curriculum.year, 
-      Curriculum.semester, 
-      Curriculum.units, 
-      Curriculum.meeting, 
-      Curriculum.hasLab, 
-      Classroom.room, 
-      Classroom.type,
-      Assign.day,
-      Assign.start_time,
-      Assign.end_time
-    FROM Assign
-    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
-    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
-    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
-    WHERE Assign.faculty_id = ? AND Assign.course_id = ?
-  ''', [facultyId, courseId]);
-    return result.first;
-  }
-
-  Future<Map<String, dynamic>> getLaboratoryAssignment(
-      int facultyId, int courseId, String type) async {
-    final db = await initializeDatabase();
-    final result = await db.rawQuery('''
-    SELECT 
-      Classroom.room, 
-      Assign.day,
-      Assign.start_time,
-      Assign. end_time
-    FROM Assign
-    INNER JOIN Faculty ON Assign.faculty_id = Faculty.id
-    INNER JOIN Curriculum ON Assign.course_id = Curriculum.id
-    INNER JOIN Classroom ON Assign.classroom_id = Classroom.id
-    WHERE Assign.faculty_id = ? AND Assign.course_id = ? AND Classroom.type = ?
-  ''', [facultyId, courseId, type]);
-    return result.first;
-  }
 }

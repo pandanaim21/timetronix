@@ -115,8 +115,7 @@ class _AddClassroomState extends State<AddClassroom> {
                                               icon: const Icon(Icons.delete),
                                               onPressed: () {
                                                 removeClassroom(
-                                                    getClassroom[index]
-                                                        ['room']);
+                                                    getClassroom[index]['id']);
                                               },
                                             ),
                                           ],
@@ -275,8 +274,9 @@ class _AddClassroomState extends State<AddClassroom> {
     }
   }
 
-  void removeClassroom(String room) async {
-    await dbHelper.removeClassroom(room);
+  void removeClassroom(int roomId) async {
+    await dbHelper.removeAssignByRoomID(roomId);
+    await dbHelper.removeClassroom(roomId);
     loadClassrooms();
   }
 

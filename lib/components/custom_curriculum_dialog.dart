@@ -69,25 +69,34 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditDialog = widget.title == 'Edit Course';
     return AlertDialog(
-      title: Text(widget.title),
+      title: Center(
+          child: Text(
+        isEditDialog ? widget.course : widget.title,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      )),
       content: SingleChildScrollView(
         child: Column(
           children: [
-            CustomTextField(
-              borderColor: Colors.blue,
-              hintText: 'Course Code',
-              controller: _courseController,
-              textAlign: TextAlign.left,
-              symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
-              leftPadding: const EdgeInsets.only(left: 8.0),
-              onChanged: (value) {
-                setState(() {
-                  _course = value;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
+            if (!isEditDialog) ...[
+              CustomTextField(
+                borderColor: Colors.blue,
+                hintText: 'Course Code',
+                controller: _courseController,
+                textAlign: TextAlign.left,
+                symmetricPadding: const EdgeInsets.symmetric(horizontal: 0.0),
+                leftPadding: const EdgeInsets.only(left: 8.0),
+                onChanged: (value) {
+                  setState(() {
+                    _course = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
             CustomTextField(
               borderColor: Colors.blue,
               hintText: 'Course Description',
@@ -129,99 +138,177 @@ class _CustomCurriculumDialogState extends State<CustomCurriculumDialog> {
                 });
               },
             ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Has Laboratory Class?'),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedHasLab,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedHasLab = newValue!;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(12.0),
-                    items: widget.hasLabDropdownItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+            const SizedBox(height: 20),
+            PopupMenuButton<String>(
+              itemBuilder: (BuildContext context) {
+                return widget.hasLabDropdownItems.map((hasLab) {
+                  return PopupMenuItem<String>(
+                    value: hasLab,
+                    child: Text(hasLab),
+                  );
+                }).toList();
+              },
+              onSelected: (String newValue) {
+                setState(() {
+                  _selectedHasLab = newValue;
+                });
+              },
+              offset: const Offset(0, 50), // Always opens below
+              constraints: const BoxConstraints(maxHeight: 250), // Limit height
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Has Labolatory?',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 ),
-              ],
+                child: Text(_selectedHasLab),
+              ),
             ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Select Year:'),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedYear,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedYear = newValue!;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(12.0),
-                    items: widget.yearDropdownItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     const Text('Has Laboratory Class?'),
+            //     const SizedBox(height: 10),
+            //     Padding(
+            //       padding: const EdgeInsets.only(right: 8.0),
+            //       child: DropdownButton<String>(
+            //         isExpanded: true,
+            //         value: _selectedHasLab,
+            //         onChanged: (String? newValue) {
+            //           setState(() {
+            //             _selectedHasLab = newValue!;
+            //           });
+            //         },
+            //         borderRadius: BorderRadius.circular(12.0),
+            //         items: widget.hasLabDropdownItems
+            //             .map<DropdownMenuItem<String>>((String value) {
+            //           return DropdownMenuItem<String>(
+            //             value: value,
+            //             child: Padding(
+            //               padding: const EdgeInsets.only(left: 10.0),
+            //               child: Text(value),
+            //             ),
+            //           );
+            //         }).toList(),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            const SizedBox(height: 20),
+            PopupMenuButton<String>(
+              itemBuilder: (BuildContext context) {
+                return widget.yearDropdownItems.map((year) {
+                  return PopupMenuItem<String>(
+                    value: year,
+                    child: Text(year),
+                  );
+                }).toList();
+              },
+              onSelected: (String newValue) {
+                setState(() {
+                  _selectedYear = newValue;
+                });
+              },
+              offset: const Offset(0, 50), // Always opens below
+              constraints: const BoxConstraints(maxHeight: 250), // Limit height
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Select Year',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 ),
-              ],
+                child: Text(_selectedYear),
+              ),
             ),
-            const SizedBox(height: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Select Semester:'),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedSemester,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedSemester = newValue!;
-                      });
-                    },
-                    borderRadius: BorderRadius.circular(12.0),
-                    items: widget.semesterDropdownItems
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     const Text('Select Year:'),
+            //     const SizedBox(height: 10),
+            //     Padding(
+            //       padding: const EdgeInsets.only(right: 8.0),
+            //       child: DropdownButton<String>(
+            //         isExpanded: true,
+            //         value: _selectedYear,
+            //         onChanged: (String? newValue) {
+            //           setState(() {
+            //             _selectedYear = newValue!;
+            //           });
+            //         },
+            //         borderRadius: BorderRadius.circular(12.0),
+            //         items: widget.yearDropdownItems
+            //             .map<DropdownMenuItem<String>>((String value) {
+            //           return DropdownMenuItem<String>(
+            //             value: value,
+            //             child: Padding(
+            //               padding: const EdgeInsets.only(left: 10.0),
+            //               child: Text(value),
+            //             ),
+            //           );
+            //         }).toList(),
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            const SizedBox(height: 20),
+            PopupMenuButton<String>(
+              itemBuilder: (BuildContext context) {
+                return widget.semesterDropdownItems.map((semester) {
+                  return PopupMenuItem<String>(
+                    value: semester,
+                    child: Text(semester),
+                  );
+                }).toList();
+              },
+              onSelected: (String newValue) {
+                setState(() {
+                  _selectedSemester = newValue;
+                });
+              },
+              offset: const Offset(0, 50), // Always opens below
+              constraints: const BoxConstraints(maxHeight: 250), // Limit height
+              child: InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Select Semester',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 ),
-              ],
+                child: Text(_selectedSemester),
+              ),
             ),
+            // Column(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     const Text('Select Semester:'),
+            //     const SizedBox(height: 10),
+            //     Padding(
+            //       padding: const EdgeInsets.only(right: 8.0),
+            //       child: DropdownButton<String>(
+            //         isExpanded: true,
+            //         value: _selectedSemester,
+            //         onChanged: (String? newValue) {
+            //           setState(() {
+            //             _selectedSemester = newValue!;
+            //           });
+            //         },
+            //         borderRadius: BorderRadius.circular(12.0),
+            //         items: widget.semesterDropdownItems
+            //             .map<DropdownMenuItem<String>>((String value) {
+            //           return DropdownMenuItem<String>(
+            //             value: value,
+            //             child: Padding(
+            //               padding: const EdgeInsets.only(left: 10.0),
+            //               child: Text(value),
+            //             ),
+            //           );
+            //         }).toList(),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

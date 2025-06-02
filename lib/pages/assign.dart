@@ -23,10 +23,13 @@ class _AddAssignsState extends State<AddAssigns> {
   String? _selectedStartTime;
   String? _selectedEndTime;
 
-  List<DropdownMenuItem<String>> _facultyDropdownItems = [];
+  //List<DropdownMenuItem<String>> _facultyDropdownItems = [];
+  List<Map<String, dynamic>> _facultyDropdownItems = [];
   List<Map<String, dynamic>> _courseDropdownItems = [];
-  List<DropdownMenuItem<String>> _lectureRoomDropdownItems = [];
-  List<DropdownMenuItem<String>> _laboratoryRoomDropdownItems = [];
+  // List<DropdownMenuItem<String>> _lectureRoomDropdownItems = [];
+  // List<DropdownMenuItem<String>> _laboratoryRoomDropdownItems = [];
+  List<Map<String, dynamic>> _lectureRoomDropdownItems = [];
+  List<Map<String, dynamic>> _laboratoryRoomDropdownItems = [];
   List<Map<String, dynamic>> assigns = [];
 
   final List<String> _days = [
@@ -54,36 +57,62 @@ class _AddAssignsState extends State<AddAssigns> {
 
     setState(
       () {
-        _facultyDropdownItems =
-            faculties.map<DropdownMenuItem<String>>((faculty) {
-          return DropdownMenuItem<String>(
-            value: faculty['id'].toString(),
-            child: Text(faculty['firstname'] + ' ' + faculty['lastname']),
-          );
+        // _facultyDropdownItems =
+        //     faculties.map<DropdownMenuItem<String>>((faculty) {
+        //   return DropdownMenuItem<String>(
+        //     value: faculty['id'].toString(),
+        //     child: Text(faculty['firstname'] + ' ' + faculty['lastname']),
+        //   );
+        // }).toList();
+
+        _facultyDropdownItems = faculties.map<Map<String, dynamic>>((faculty) {
+          return {
+            'faculty_id': faculty['id'].toString(),
+            'firstname': faculty['firstname'],
+            'lastname': faculty['lastname'],
+          };
         }).toList();
 
         _courseDropdownItems = courses.map<Map<String, dynamic>>((course) {
           return {
-            'id': course['id'].toString(),
+            'course_id': course['course_id'].toString(),
             'course': course['course'],
             'hasLab': course['hasLab'],
           };
         }).toList();
 
+        // _lectureRoomDropdownItems =
+        //     lecRooms.map<DropdownMenuItem<String>>((lecRoom) {
+        //   return DropdownMenuItem<String>(
+        //     value: lecRoom['id'].toString(),
+        //     child: Text(lecRoom['room']),
+        //   );
+        // }).toList();
+
+        // _laboratoryRoomDropdownItems =
+        //     labRooms.map<DropdownMenuItem<String>>((labRoom) {
+        //   return DropdownMenuItem<String>(
+        //     value: labRoom['id'].toString(),
+        //     child: Text(labRoom['room']),
+        //   );
+        // }).toList();
+
         _lectureRoomDropdownItems =
-            lecRooms.map<DropdownMenuItem<String>>((lecRoom) {
-          return DropdownMenuItem<String>(
-            value: lecRoom['id'].toString(),
-            child: Text(lecRoom['room']),
-          );
+            lecRooms.map<Map<String, dynamic>>((lecRoom) {
+          return {
+            'room_id': lecRoom['id'].toString(),
+            'room': lecRoom['room'],
+            'type': lecRoom['type'],
+          };
         }).toList();
 
         _laboratoryRoomDropdownItems =
-            labRooms.map<DropdownMenuItem<String>>((labRoom) {
-          return DropdownMenuItem<String>(
-            value: labRoom['id'].toString(),
-            child: Text(labRoom['room']),
-          );
+            labRooms.map<Map<String, dynamic>>((labRoom) {
+          return {
+            'room_id': labRoom['id'].toString(),
+            'room': labRoom['room'],
+            'type': labRoom['type'],
+          };
         }).toList();
 
         assigns = assignData;
@@ -96,7 +125,7 @@ class _AddAssignsState extends State<AddAssigns> {
   }
 
   _showClassDialog(
-      String className, List<DropdownMenuItem<String>> roomDropdownItems) {
+      String className, List<Map<String, dynamic>> roomDropdownItems) {
     showCustomClassDialog(
       context,
       className,
@@ -156,7 +185,9 @@ class _AddAssignsState extends State<AddAssigns> {
                         },
                         () {
                           _showClassDialog(
-                              'Lecture Class', _lectureRoomDropdownItems);
+                            'Lecture Class',
+                            _lectureRoomDropdownItems,
+                          );
                         },
                         () {
                           addAssign();
@@ -182,7 +213,9 @@ class _AddAssignsState extends State<AddAssigns> {
                         },
                         () {
                           _showClassDialog(
-                              'Laboratory Class', _laboratoryRoomDropdownItems);
+                            'Laboratory Class',
+                            _laboratoryRoomDropdownItems,
+                          );
                         },
                         () {
                           addAssign();
@@ -196,6 +229,189 @@ class _AddAssignsState extends State<AddAssigns> {
                 ],
               ),
             ),
+            Expanded(
+              child: FutureBuilder<List<Map<String, dynamic>>>(
+                future: dbHelper.getAssignment(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    final assignments = snapshot.data!;
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final totalWidth = constraints.maxWidth;
+                        final columnWidth = totalWidth / 6;
+
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(minWidth: totalWidth),
+                            child: DataTable(
+                              headingRowColor: WidgetStateProperty.all(
+                                  Colors.deepPurple.shade100),
+                              dataRowColor:
+                                  WidgetStateProperty.all(Colors.white),
+                              border:
+                                  TableBorder.all(color: Colors.grey.shade300),
+                              columnSpacing:
+                                  0, // We'll use fixed widths instead
+                              columns: const [
+                                DataColumn(
+                                    label: Text('Faculty',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('Course',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('Day',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('Room',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('Start Time',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                                DataColumn(
+                                    label: Text('End Time',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold))),
+                              ],
+
+                              rows: assignments.map((assignment) {
+                                final facultyName =
+                                    '${assignment['firstname']} ${assignment['lastname']}';
+                                final courseID = assignment['course_id'];
+                                final day = assignment['day'];
+                                final room = assignment['room'];
+                                final startTime = assignment['start_time'];
+                                final endTime = assignment['end_time'];
+
+                                return DataRow(
+                                  cells: [
+                                    DataCell(SizedBox(
+                                        width: columnWidth,
+                                        child: Text(facultyName))),
+                                    DataCell(SizedBox(
+                                        width: columnWidth,
+                                        child: Text(courseID))),
+                                    DataCell(SizedBox(
+                                        width: columnWidth, child: Text(day))),
+                                    DataCell(SizedBox(
+                                        width: columnWidth,
+                                        child: Text(room.toString()))),
+                                    DataCell(SizedBox(
+                                        width: columnWidth,
+                                        child: Text(startTime))),
+                                    DataCell(SizedBox(
+                                        width: columnWidth,
+                                        child: Text(endTime))),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            )
+            // Expanded(
+            //   child: FutureBuilder<List<Map<String, dynamic>>>(
+            //     future: dbHelper.getAssignment(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return const Center(child: CircularProgressIndicator());
+            //       } else if (snapshot.hasError) {
+            //         return Center(child: Text('Error: ${snapshot.error}'));
+            //       } else {
+            //         final assignments = snapshot.data!;
+            //         return ListView.builder(
+            //           itemCount: assignments.length,
+            //           itemBuilder: (context, index) {
+            //             final assignment = assignments[index];
+            //             final facultyName =
+            //                 '${assignment['firstname']} ${assignment['lastname']}';
+            //             final courseID = assignment['course_id'];
+            //             final room = assignment['room'];
+            //             final startTime = assignment['start_time'];
+            //             final endTime = assignment['end_time'];
+            //             return Padding(
+            //               padding: const EdgeInsets.symmetric(vertical: 8.0),
+            //               child: Row(
+            //                 children: [
+            //                   Expanded(
+            //                     child: Card(
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text(
+            //                           'Faculty: $facultyName',
+            //                           style: const TextStyle(fontSize: 16.0),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Expanded(
+            //                     child: Card(
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text(
+            //                           'Course: $courseID',
+            //                           style: const TextStyle(fontSize: 16.0),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Expanded(
+            //                     child: Card(
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text(
+            //                           'Room: $room',
+            //                           style: const TextStyle(fontSize: 16.0),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Expanded(
+            //                     child: Card(
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text(
+            //                           'Start Time: $startTime',
+            //                           style: const TextStyle(fontSize: 16.0),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Expanded(
+            //                     child: Card(
+            //                       child: Padding(
+            //                         padding: const EdgeInsets.all(8.0),
+            //                         child: Text(
+            //                           'End Time: $endTime',
+            //                           style: const TextStyle(fontSize: 16.0),
+            //                         ),
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             );
+            //           },
+            //         );
+            //       }
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -214,7 +430,7 @@ class _AddAssignsState extends State<AddAssigns> {
   void addAssign() async {
     await dbHelper.addAssign(
       int.parse(_selectedFaculty!),
-      int.parse(_selectedCourse!),
+      _selectedCourse!,
       int.parse(_selectedRoom!),
       _selectedDays.join(', '),
       _selectedStartTime!,
@@ -223,8 +439,9 @@ class _AddAssignsState extends State<AddAssigns> {
     _loadData();
   }
 
-  void removeAssign(int id) async {
-    await dbHelper.removeAssign(id);
-    _loadData();
-  }
+  //assigment.dart
+  // void removeAssign(int id) async {
+  //   await dbHelper.removeAssign(id);
+  //   _loadData();
+  // }
 }
