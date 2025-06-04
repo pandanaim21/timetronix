@@ -36,7 +36,8 @@ class DatabaseHelper {
         );
         // Create Assign table with foreign key constraints
         await database.execute(
-            "CREATE TABLE Assign (id INTEGER PRIMARY KEY AUTOINCREMENT,  faculty_id INTEGER, course_id TEXT, room_id INTEGER, day TEXT, start_time TEXT, end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(course_id), FOREIGN KEY (room_id) REFERENCES Room(id))");
+          "CREATE TABLE Assign (id INTEGER PRIMARY KEY AUTOINCREMENT,  faculty_id INTEGER, course_id TEXT, room_id INTEGER, day TEXT, start_time TEXT, end_time TEXT, FOREIGN KEY (faculty_id) REFERENCES Faculty(id), FOREIGN KEY (course_id) REFERENCES Curriculum(course_id), FOREIGN KEY (room_id) REFERENCES Room(id))",
+        );
       },
       version: 1,
     );
@@ -279,6 +280,7 @@ class DatabaseHelper {
   //     },
   //   );
   // }
+
   Future<int> addAssign(int facultyId, String courseId, int roomId, String days,
       String startTime, String endTime) async {
     final db = await database;
